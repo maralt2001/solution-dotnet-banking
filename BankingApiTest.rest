@@ -1,0 +1,25 @@
+@baseUrl = http://localhost:5001/api/banking
+@user1 = 5dd5636a6a89110006ef7049
+@user2 = 5db4755b84460500015dfc4b
+@user3 = 5dd5636a6a89110006ef7049
+
+
+
+### Get all BankingAccounts
+Get {{baseUrl}}/accounts/getall
+
+### Get one BankingAccount by ID
+Get {{baseUrl}}/account/getone?id={{user3}}
+
+### Patch one BankingAccount Property
+PATCH {{baseUrl}}/account/update?id={{user1}}
+Content-Type: application/json
+
+{
+    "isActive": false
+}
+
+### Get a limit and optional skip of BankingAccounts
+Get {{baseUrl}}/accounts/take?limit=2&skip=2
+
+

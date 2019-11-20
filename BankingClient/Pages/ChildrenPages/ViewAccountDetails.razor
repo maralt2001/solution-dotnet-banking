@@ -1,0 +1,54 @@
+﻿@using BankingApi.Models
+
+
+
+    <div class="modal fade show" id="myModal" style=" display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Detail Account View</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="@CloseModal">&times;</button>
+                </div>
+                <div class="modal-body">
+
+                    <p><span>ID: @Account._id</span></p>
+                    <p><span>Firstname: @Account.firstname</span></p>
+                    <p><span>Lastname: @Account.lastname</span></p>
+                    <p><span>isActive: @Account.isActive</span></p>
+                    <br />
+                    <p><span>Created: @Account.createdAt</span></p>
+                    <p><span>ChangedAt: @Account.changed.changedAt</span></p>
+                    <p><span>ChangedBy: @Account.changed.changedBy</span></p>
+
+                </div>
+
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="@CloseModal">Close</button>
+
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal-backdrop fade show"></div>
+
+
+
+
+
+@code {
+
+    // get Data from Parent
+    [Parameter] public BankingAccount Account { get; set; }
+    
+    // Action for sending Data from child to parent
+    [Parameter] public Action<bool> ShowDetailAccountview{ get; set; }
+    
+    // are called when Modal closed via button
+    public void CloseModal()
+    {
+        
+        ShowDetailAccountview(false);
+    }
+
+
+}

@@ -1,0 +1,48 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:51495",
+      "sslPort": 0
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "api/banking/accounts/getall",
+      "environmentVariables": {
+        "CollectionName": "Banking_Accounts",
+        "DBName": "WebDB",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBConnectionPath": "mongodb://localhost"
+      }
+    },
+    "BankingApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "api/banking/accounts/getall",
+      "environmentVariables": {
+        "CollectionName": "Banking_Accounts",
+        "DBName": "WebDB",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBConnectionPath": "mongodb://localhost"
+      },
+      "applicationUrl": "http://localhost:5000/"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/banking/accounts/getall",
+      "environmentVariables": {
+        "CollectionName": "Banking_Accounts",
+        "DBName": "WebDB",
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "DBConnectionPath": "mongodb://host.docker.internal"
+      },
+      "httpPort": 51496
+    }
+  }
+}
