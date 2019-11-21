@@ -1,8 +1,6 @@
 ﻿using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Data;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoService.Helpers;
@@ -101,6 +99,13 @@ namespace MongoService
 
             return await collection.Find(new BsonDocument()).Skip(skip).Limit(limit).ToListAsync();
 
+        }
+
+        public async Task<T> LoadOneRecordRegexAsync<T>(string collectionName, string field, string regexvalue)
+        {
+            IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
+            var filter = Builders<T>.Filter.Regex(field, new BsonRegularExpression($"{regexvalue}", "i"));
+            return await collection.FindAsync(filter).Result.FirstOrDefaultAsync();
         }
 
 

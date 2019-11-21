@@ -15,5 +15,6 @@ namespace MongoService
         Task<List<T>> LoadRecordsAsync<T>(string collectionName);
         Task<List<T>> LoadRecordsSkpLimitAsync<T>(string collectionName, int limit, int skip);
         Task<bool> UpdateRecordAsync<T>(string collectionName, string id, T record);
+        Task<T> LoadOneRecordRegexAsync<T>(string collectionName, string field, string regexvalue);
     }
 }

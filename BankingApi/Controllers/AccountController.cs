@@ -163,6 +163,23 @@ namespace BankingApi.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpGet]
+        [Route("api/banking/account/getoneregex")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetOneAccountRegex([FromQuery] string field, string regexvalue)
+        {
+            try
+            {
+                BankingAccount result = await _dBContext.LoadOneRecordRegexAsync<BankingAccount>("Banking_Accounts", field, regexvalue);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
         
         #endregion
 
