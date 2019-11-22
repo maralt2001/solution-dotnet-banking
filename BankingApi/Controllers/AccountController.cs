@@ -26,7 +26,19 @@ namespace BankingApi.Controllers
 
         }
 
+        #region Url Path /api/check/dbconnection
 
+        [HttpGet]
+        [Route("api/check/dbconnection")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> CheckDBConnection()
+        {
+            var result = await _dBContext.IsConnectionUp();
+            return result ? Ok("DB Connection is up!") : Ok("DB Connection is down!");
+        }
+
+        #endregion
 
         #region Url Path /api/banking/account
 
