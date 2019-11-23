@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoService.Helpers;
+using System.Threading;
 
 namespace MongoService
 {
@@ -110,13 +111,18 @@ namespace MongoService
 
         public async Task<bool> IsConnectionUp (int secondToWait = 1)
         {
+
             if (secondToWait <= 0)
             {
                 throw new ArgumentOutOfRangeException("secondToWait", secondToWait, "Must be at least 1 second");
             }
             else
             {
-                Task<bool> result = Task.Run(() => { return Database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait(secondToWait * 1000);});
+                Task<bool> result = Task.Run(() => 
+                    { 
+                        return Database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait(secondToWait * 1000);
+                    });
+
                 return await result;
                
             }
