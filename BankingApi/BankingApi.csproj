@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiAccess\ApiAccess.csproj" />
     <ProjectReference Include="..\MongoDBContext\MongoService.csproj" />
   </ItemGroup>
 
