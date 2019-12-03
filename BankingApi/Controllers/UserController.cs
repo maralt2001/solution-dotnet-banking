@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using ApiAccess;
 using Microsoft.AspNetCore.Http;
@@ -8,6 +9,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoService;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApi.Controllers
 {
@@ -29,7 +33,7 @@ namespace BankingApi.Controllers
         [HttpPost]
         [Route("api/user/register")]
         [Produces("application/json")]
-
+        
         public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser applicationUser)
         {
             ApplicationUser newApiUser = new ApplicationUser(applicationUser.email, applicationUser.password);
@@ -68,12 +72,40 @@ namespace BankingApi.Controllers
                 PasswordVerificationResult result = await appUser.PasswordVerification(appUser.password, applicationUser.password);
                 if (result.ToString() == "Success")
                 {
-                    return Ok("You are logged in");
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, appUser.email),
+                        new Claim(ClaimTypes.Email, appUser.email, ClaimValueTypes.Email)
+                    };
+
+                    var userIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsPrincipal userPrincipal = new ClaimsPrincipal(userIdentity);
+
+                    if (userPrincipal.Identity.IsAuthenticated)
+                    {
+                        await HttpContext.SignInAsync("Cookie", userPrincipal, new AuthenticationProperties
+                        {
+                            ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+                            IsPersistent = true,
+                            AllowRefresh = false
+
+                        });
+
+
+
+                        return Ok("You are logged in"); // auth succeed 
+                    }
+                    else
+                    {
+                        return StatusCode(400, "You are not logged in");
+                    }
+
+                    
                 }
                 else
                 {
                     //To Do update accessFailedCount
-                    return StatusCode(400, "You are not logged in");
+                    return StatusCode(400, "User or password wrong");
                 }
             }
             else

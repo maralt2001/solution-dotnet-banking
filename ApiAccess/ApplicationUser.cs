@@ -17,8 +17,8 @@ namespace ApiAccess
         [EmailAddress]
         public string email { get; set; }
         public string password { get; set; }
-        public int accessFailedCount { get; set; } = 0;
-        public DateTime createdAt { get; set; } = DateTime.Now;
+        public int accessFailedCount { get; set; }
+        public DateTime createdAt { get; set; }
 
         public ApplicationUser()
         {
@@ -29,6 +29,8 @@ namespace ApiAccess
         {
             this.email = email;
             this.password = HashPassword(password).Result;
+            this.createdAt = DateTime.Now;
+            this.accessFailedCount = 0;
         }
 
 
@@ -36,8 +38,7 @@ namespace ApiAccess
         {
             var result = Task.Run(() =>
             {
-                var passwordHasher = new PasswordHasher<ApplicationUser>();
-                return passwordHasher.HashPassword(this, password);
+                return new PasswordHasher<ApplicationUser>().HashPassword(this, password);
 
             });
 
@@ -49,8 +50,7 @@ namespace ApiAccess
         {
             var result = Task.Run(() =>
             {
-                var verify = new PasswordHasher<ApplicationUser>();
-                return verify.VerifyHashedPassword(this, hashedPassword, providedPassword);
+                return new PasswordHasher<ApplicationUser>().VerifyHashedPassword(this, hashedPassword, providedPassword);
 
             });
 

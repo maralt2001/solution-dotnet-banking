@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoService;
 using ApiAccess;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace BankingApi.Controllers
 {
@@ -28,11 +28,10 @@ namespace BankingApi.Controllers
         }
 
         #region Url Path /api/check/dbconnection
-
+        [Authorize]
         [HttpGet]
         [Route("api/check/dbconnection")]
         [Produces("application/json")]
-
         public async Task<IActionResult> CheckDBConnection()
         {
             var result = await _dBContext.IsConnectionUp();
