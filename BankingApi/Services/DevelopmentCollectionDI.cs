@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Options;
 using MongoService;
-using System;
-using System.Text;
+using ApiAccess;
 
 namespace BankingApi.Services
 {
@@ -28,19 +25,12 @@ namespace BankingApi.Services
                 configuration.GetSection("DbConnectionPath").Value));
 
             services.AddAuthentication().AddCookie("Cookie");
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration["issuer"],
-                        ValidAudience = configuration["audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["securityKey"]))
-                    };
-                });
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+
+                options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
+
+            });
+            
            
 
             return services;
