@@ -1,10 +1,7 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 using ApiAccess;
+using Microsoft.Extensions.Configuration;
 
 namespace BankingApi.Controllers
 {
@@ -12,12 +9,19 @@ namespace BankingApi.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly IConfiguration configuration;
+
+        public AuthController(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         [HttpPost]
         [Route("api/token")]
         [Produces("application/json")]
         public async Task<IActionResult> GetToken()
         {
-            string token = await new ApplicationToken("mystrongsecretkey", "mar.in", "readers").GetJwtSecurityTokenAsync();
+            string token = await new ApplicationToken(configuration).GetJwtSecurityTokenAsync();
             
             return Ok(token);
         }

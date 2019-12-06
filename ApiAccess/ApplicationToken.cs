@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -9,16 +10,11 @@ namespace ApiAccess
 {
     public class ApplicationToken
     {
-        private string securityKey;
-        private string issuer;
-        private string audience;
-        
+        private readonly IConfiguration configuration;
 
-        public ApplicationToken(string securityKey, string issuer, string audience)
+        public ApplicationToken(IConfiguration configuration)
         {
-            this.securityKey = securityKey;
-            this.issuer = issuer;
-            this.audience = audience;
+            this.configuration = configuration;
         }
         public async Task<string> GetJwtSecurityTokenAsync()
         {
@@ -26,14 +22,14 @@ namespace ApiAccess
 
             {
 
-                var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
+                var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["securityKey"]));
 
                 var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256Signature);
 
                 var token = new JwtSecurityToken(
 
-                    issuer: issuer,
-                    audience: audience,
+                    issuer: configuration["issuer"],
+                    audience: configuration["audience"],
                     expires: DateTime.Now.AddHours(1),
                     signingCredentials: signingCredentials
 

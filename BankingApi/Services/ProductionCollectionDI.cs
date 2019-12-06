@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Microsoft.IdentityModel.Tokens;
 using MongoService;
+using System.Text;
 
 namespace BankingApi.Services
 {
@@ -19,7 +21,22 @@ namespace BankingApi.Services
                 "web",
                 "db"));
 
-           
+            services.AddAuthentication().AddCookie("Cookie");
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["issuer"],
+                        ValidAudience = configuration["audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["securityKey"]))
+                    };
+                });
+
+
 
             return services;
         }
@@ -27,6 +44,7 @@ namespace BankingApi.Services
         public static IApplicationBuilder AddProductionApplictionBuilder(this IApplicationBuilder app)
         {
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

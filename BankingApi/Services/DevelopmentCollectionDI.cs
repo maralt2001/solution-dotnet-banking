@@ -19,9 +19,6 @@ namespace BankingApi.Services
 
         public static IServiceCollection AddDevelopmentServices(this IServiceCollection services, IConfiguration configuration)
         {
-            string securityKey = "mystrongsecretkey";
-            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey));
-
 
             services.AddControllers();
             services.AddCors();
@@ -39,9 +36,9 @@ namespace BankingApi.Services
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "mar.in",
-                        ValidAudience = "readers",
-                        IssuerSigningKey = symmetricSecurityKey
+                        ValidIssuer = configuration["issuer"],
+                        ValidAudience = configuration["audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["securityKey"]))
                     };
                 });
            
