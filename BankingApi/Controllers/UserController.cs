@@ -12,6 +12,7 @@ using MongoService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using BankingApi.Models;
 
 namespace BankingApi.Controllers
 {
@@ -23,6 +24,7 @@ namespace BankingApi.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly IDBContext _dBContext;
+        private readonly LoginResult loginResult = new LoginResult();
 
         public UserController(IDBContext dBContext, ILogger<UserController> logger) 
         {
@@ -81,23 +83,25 @@ namespace BankingApi.Controllers
                     var userIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     ClaimsPrincipal userPrincipal = new ClaimsPrincipal(userIdentity);
 
+                    var authProperties = new AuthenticationProperties
+                    {
+                        ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
+                        IsPersistent = true,
+                        AllowRefresh = false,
+                    };
+
                     if (userPrincipal.Identity.IsAuthenticated)
                     {
-                        await HttpContext.SignInAsync("Cookie", userPrincipal, new AuthenticationProperties
-                        {
-                            ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
-                            IsPersistent = true,
-                            AllowRefresh = false
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, authProperties);
+                        
 
-                        });
-
-
-
-                        return Ok("You are logged in"); // auth succeed 
+                        loginResult.IsLoggedin = true;
+                        return Ok(loginResult); // auth succeed 
                     }
                     else
                     {
-                        return StatusCode(400, "You are not logged in");
+                        loginResult.IsLoggedin = false;
+                        return StatusCode(400, loginResult);
                     }
 
                     
@@ -105,13 +109,35 @@ namespace BankingApi.Controllers
                 else
                 {
                     //To Do update accessFailedCount
-                    return StatusCode(400, "User or password wrong");
+                    loginResult.IsLoggedin = false;
+                    return StatusCode(400, loginResult);
                 }
             }
             else
             {
                 return StatusCode(400);
             }
+        }
+        [HttpPost]
+        [Route("api/user/logout")]
+        [Produces("application/json")]
+
+        public async Task<IActionResult> LogoutUser(ApplicationUser applicationUser)
+        {
+            try
+            {
+                //var x = HttpContext.Request.Cookies[".AspNetCore.Cookies"];
+                //Cookie des User wird gelöscht
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                loginResult.IsLoggedin = false;
+                return Ok(loginResult);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(400);
+            }
+            
         }
     }
 }

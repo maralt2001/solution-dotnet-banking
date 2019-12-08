@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@using Provider
+@inject UserState  UserState
 
 <div class="sidebar">
     <NavMenu />
@@ -6,6 +8,16 @@
 
 <div class="main">
     <div class="top-row px-4">
+        @if (UserState.IsLoggedIn == false)
+        {
+            <a href="login">Login</a>
+        }
+        else
+        {
+            <a>@UserState.Username</a>
+            <a href="">Logout</a>
+        }
+
         <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
     </div>
 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using BankingClient.Data;
+using BankingClient.Provider;
 
 namespace BankingClient
 {
@@ -28,6 +29,8 @@ namespace BankingClient
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<BankingAccountsService>();
+            services.AddSingleton<ApiUserService>();
+            services.AddScoped<UserState>();
             
         }
 

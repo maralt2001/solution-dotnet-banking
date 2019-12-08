@@ -1,4 +1,5 @@
 ﻿using ApiAccess;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -20,7 +21,7 @@ namespace BankingApi.Services
                 "web",
                 "db"));
 
-            services.AddAuthentication().AddCookie("Cookie");
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
 
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;

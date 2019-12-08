@@ -18,7 +18,7 @@ else
 {
 
     <div class="input-group mb-3 col-sm-6">
-        <input type="text" class="form-control" placeholder="Search" @oninput="@ValueChanged"  value="@value"/>
+        <input type="text" class="form-control" placeholder="Search" @bind="@value"/>
         <div class="input-group-append">
             <button class="btn btn-success" type="button" @onclick="@SearchValue" style="margin-left: 5px">Go</button>
             <button class="btn btn-danger" @attributes="@buttonResetDictionary" type="button" @onclick="@ResetTable" style="margin-left: 5px">Reset</button>
@@ -84,14 +84,6 @@ else
             value = "";
             buttonResetDictionary.Remove("disabled");
             accounts = result;
-        }
-
-        // called every time when the value is changed in the input field
-        public void ValueChanged(ChangeEventArgs args)
-        {
-            value = args.Value.ToString();
-
-
         }
 
         //are called when the reset button is clicked the table will be refreshed

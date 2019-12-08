@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 using MongoService;
 using ApiAccess;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace BankingApi.Controllers
 {
@@ -28,7 +30,8 @@ namespace BankingApi.Controllers
         }
 
         #region Url Path /api/check/dbconnection
-        [Authorize]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet]
         [Route("api/check/dbconnection")]
         [Produces("application/json")]

@@ -1,0 +1,41 @@
+﻿@page "/login"
+@inherits LoginBase
+
+
+<div class="container">
+    <h2>Login</h2>
+    <p>Enter your SignIn Credentials</p>
+    <label style="margin-top: 15px">Email:</label>
+    <div class="input-group">
+        <input type="email" class="form-control" @bind="@Username" placeholder="..." />
+    </div>
+    <label style="margin-top: 15px">Password:</label>
+    <div class="input-group">
+        <input type="password" class="form-control" @bind="@Password" placeholder="..." />
+    </div>
+    <button style="margin-top: 25px" type="button" class="btn btn-primary" @onclick="@LoginUser">Submit</button>
+</div>
+<div class="container">
+
+    @if (UserState.IsLoggedIn == true && Init == false)
+    {
+        <div class="alert alert-success" style="margin-top:25px">
+            <strong>Success!</strong> You are logged in successfully
+        </div>
+    }
+    else if (UserState.IsLoggedIn == false && Init == false)
+    {
+        <div class="alert alert-danger" style="margin-top:25px">
+            <strong>Error!</strong> You are not logged in
+        </div>
+    }
+
+</div>
+
+
+
+
+
+
+
+
