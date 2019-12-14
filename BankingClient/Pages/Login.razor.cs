@@ -3,6 +3,7 @@ using BankingApi.Models;
 using BankingClient.Data;
 using BankingClient.Provider;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http;
 
 namespace BankingClient.Pages
 {
@@ -19,11 +20,14 @@ namespace BankingClient.Pages
 
         public async void LoginUser()
         {
-            var user = new ApplicationUser();
-            user.email = Username;
-            user.password = Password;
+            var user = new ApplicationUser
+            {
+                email = Username,
+                password = Password
+            };
 
-            LoginResult result = await UserService.LoginUser(user);
+            var result = await UserService.LoginUser(user);
+            
 
             if(result.IsLoggedin)
             {

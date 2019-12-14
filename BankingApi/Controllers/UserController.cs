@@ -87,13 +87,16 @@ namespace BankingApi.Controllers
                     {
                         ExpiresUtc = DateTime.UtcNow.AddMinutes(20),
                         IsPersistent = true,
-                        AllowRefresh = false,
+                        AllowRefresh = false
+                        
                     };
 
                     if (userPrincipal.Identity.IsAuthenticated)
                     {
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal, authProperties);
-                        
+                        //Response.Cookies.Append("Hallo", "Winter");
+
+
 
                         loginResult.IsLoggedin = true;
                         return Ok(loginResult); // auth succeed 
@@ -118,15 +121,14 @@ namespace BankingApi.Controllers
                 return StatusCode(400);
             }
         }
-        [HttpPost]
+        [HttpGet]
         [Route("api/user/logout")]
         [Produces("application/json")]
-
-        public async Task<IActionResult> LogoutUser(ApplicationUser applicationUser)
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> LogoutUser()
         {
             try
             {
-                //var x = HttpContext.Request.Cookies[".AspNetCore.Cookies"];
                 //Cookie des User wird gelöscht
                 await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 loginResult.IsLoggedin = false;

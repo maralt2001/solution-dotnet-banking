@@ -204,12 +204,12 @@ namespace BankingApi.Controllers
         [HttpGet]
         [Route("api/banking/accounts/getall")]
         [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetBankingAccounts()
         {
             try
             {
                 var result = await _dBContext.LoadRecordsAsync<BankingAccount>("Banking_Accounts");
-
                 return Ok(result);
                 
             }

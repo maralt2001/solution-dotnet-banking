@@ -22,7 +22,7 @@
     },
     "BankingApi": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "api/banking/accounts/getall",
       "environmentVariables": {
         "CollectionName": "Banking_Accounts",
