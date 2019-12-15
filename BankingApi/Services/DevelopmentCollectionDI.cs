@@ -25,6 +25,7 @@ namespace BankingApi.Services
                 configuration.GetSection("DbConnectionPath").Value));
 
             services.AddAuthentication().AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
 
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;

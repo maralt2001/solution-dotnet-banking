@@ -1,10 +1,8 @@
 ﻿using BankingApi.Models;
 using BankingClient.Provider;
-using Microsoft.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -14,28 +12,31 @@ namespace BankingClient.Data
     public class BankingAccountsService
     {
         private readonly CookieContainer _cookieContainer;
+        private readonly string loginUrl;
+        private readonly string getAllAccountsFromApi;
 
-        public BankingAccountsService(CookieContainer cookieContainer)
+        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration)
         {
             _cookieContainer = cookieContainer;
+            loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
+            getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
         }
 
         // Request api/banking/accounts/getall + set Authorization Cookie
         public async Task<BankingAccount[]> GetAccountsAsync()
         {
-            string baseUrl = "http://localhost:5000/api/banking/accounts/getall";
-            string cookieLoginUrl = "http://localhost:5000/api/user/login";
+            
             HttpResponseMessage responseMessage;
 
             using HttpClient client = new HttpClient();
             if(_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, baseUrl), _cookieContainer, cookieLoginUrl);
+                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 responseMessage = await client.SendAsync(message);
             }
             else
             {
-                responseMessage = await client.GetAsync(baseUrl);
+                responseMessage = await client.GetAsync(getAllAccountsFromApi);
             }
             
             if (responseMessage.IsSuccessStatusCode)
@@ -52,10 +53,9 @@ namespace BankingClient.Data
 
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {
-            string baseUrl = "http://localhost:5000/api/banking/accounts/getall";
 
             using HttpClient client = new HttpClient();
-            var response = await client.GetAsync(baseUrl);
+            var response = await client.GetAsync(getAllAccountsFromApi);
             if (response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();
