@@ -2,7 +2,8 @@
 @using BankingClient.Data
 @using BankingApi.Models
 @using BankingClient.Pages.ChildrenPages
-@inject BankingAccountsService AccountService
+
+@inherits BaseBankingAccounts
 
 
 
@@ -10,7 +11,7 @@
 
 <p>This component demonstrates fetching data from the BankingApi.</p>
 
-@if (accounts == null)
+@if (Accounts == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,10 +19,10 @@ else
 {
 
     <div class="input-group mb-3 col-sm-6">
-        <input type="text" class="form-control" placeholder="Search" @bind="@value"/>
+        <input type="text" class="form-control" placeholder="Search" @bind="@Value" />
         <div class="input-group-append">
             <button class="btn btn-success" type="button" @onclick="@SearchValue" style="margin-left: 5px">Go</button>
-            <button class="btn btn-danger" @attributes="@buttonResetDictionary" type="button" @onclick="@ResetTable" style="margin-left: 5px">Reset</button>
+            <button class="btn btn-danger" @attributes="@ButtonResetDictionary" type="button" @onclick="@ResetTable" style="margin-left: 5px">Reset</button>
         </div>
     </div>
 
@@ -35,7 +36,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var account in accounts)
+            @foreach (var account in Accounts)
             {
                 <tr @onclick="@(e => ViewAccountDetails(account))">
                     <td>@account._id</td>
@@ -46,87 +47,14 @@ else
             }
         </tbody>
     </table>
-    <TableEntryCount TableCount="@count"></TableEntryCount>
+    <TableEntryCount TableCount="@Count"></TableEntryCount>
 
-    if(isTableRowClicked)
+    if (IsTableRowClicked)
     {
-    
-        <ViewAccountDetails Account="@tableRowAccount" ShowDetailAccountview="ShowAccountDetails"></ViewAccountDetails>
+
+        <ViewAccountDetails Account="@TableRowAccount" ShowDetailAccountview="ShowAccountDetails"></ViewAccountDetails>
     }
 
 
 
 }
-
-    @code{
-        #region Page Parameter
-
-        [Parameter] public BankingAccount[] accounts { get; set; }
-        [Parameter] public BankingAccount[] cache { get; set; }
-        [Parameter] public int count { get; set; }
-
-
-        [Parameter] public string value { get; set; }
-        [Parameter] public Dictionary<string, Object> buttonResetDictionary { get; set; } = new Dictionary<string, object>();
-
-        [Parameter] public bool isTableRowClicked { get; set; }
-        [Parameter] public BankingAccount tableRowAccount { get; set; }
-
-        #endregion
-
-        #region Page Methods
-
-        // are called when the search button is clicked
-        public void SearchValue()
-        {
-            var result = accounts.Where(s => s.firstname == value || s.lastname == value).ToArray();
-            count = result.Length;
-            value = "";
-            buttonResetDictionary.Remove("disabled");
-            accounts = result;
-        }
-
-        //are called when the reset button is clicked the table will be refreshed
-        public void ResetTable()
-        {
-            accounts = cache;
-            count = cache.Length;
-            buttonResetDictionary.Add("disabled", true);
-
-        }
-
-        // are called when a row in the table is clicked
-        public void ViewAccountDetails(BankingAccount oneAccount)
-        {
-            isTableRowClicked = true;
-            tableRowAccount = oneAccount;
-
-        }
-
-        //are called from ViewAccountDetails Component if ModalClosed -> Child Return Action
-        public void ShowAccountDetails(bool value)
-        {
-            isTableRowClicked = false;
-            StateHasChanged();
-        }
-
-        //are called when a component is first initialised and each time new or updated parameters are received from the parent in the render tree.
-        protected override async Task OnParametersSetAsync()
-        {
-            var setInitStates = Task.Run(() => buttonResetDictionary.Add("disabled",true));
-            await setInitStates;
-        }
-
-        //Once the component has received its initial parameters from its parent in the render tree
-        protected override async Task OnInitializedAsync()
-        {
-            accounts = await AccountService.GetAccountsAsync();
-
-            cache = accounts;
-            count = accounts.Length;
-
-        }
-
-        #endregion
-
-    }

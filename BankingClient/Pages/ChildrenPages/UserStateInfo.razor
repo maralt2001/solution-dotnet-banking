@@ -1,0 +1,39 @@
+﻿
+@if (IsLoginState)
+{
+    ButtonText = "Logout";
+    <div>
+        <a>@UserName</a>
+        <button type="button" class="btn btn-primary" @onclick="OnClick">@ButtonText</button>
+      
+    </div>
+    
+}
+else
+{
+    ButtonText = "Login";
+    <div>
+        <button type="button" class="btn btn-primary" @onclick="OnClick">@ButtonText</button>
+     
+    </div>
+    
+}
+
+
+@code {
+
+    [Parameter] public bool IsLoginState { get; set; }
+
+    [Parameter] public string ButtonText { get; set; } 
+
+    [Parameter] public string UserName { get; set; }
+
+    [Parameter] public EventCallback<MouseEventArgs> OnClick { get; set; }
+
+
+
+}
+
+
+
+

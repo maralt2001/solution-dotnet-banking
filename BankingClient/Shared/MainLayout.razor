@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @using Provider
+@using BankingClient.Data
 @inject UserState  UserState
+@using BankingClient.Pages.ChildrenPages
 
 <div class="sidebar">
     <NavMenu />
@@ -8,16 +10,8 @@
 
 <div class="main">
     <div class="top-row px-4">
-        @if (UserState.IsLoggedIn == false)
-        {
-            <a href="login">Login</a>
-        }
-        else
-        {
-            <a>@UserState.Username</a>
-            <a href="logout">Logout</a>
-        }
-
+        <UserStateInfo IsLoginState="@UserState.IsLoggedIn" UserName="@UserState.Username" OnClick="@NavigateToDest"></UserStateInfo>
+        
         <a href="https://docs.microsoft.com/en-us/aspnet/" target="_blank">About</a>
     </div>
 
@@ -25,3 +19,23 @@
         @Body
     </div>
 </div>
+
+@code {
+
+    [Inject] public NavigationManager Navigation { get; set; }
+    [Inject] ApiUserService UserService { get; set; }
+
+    public async void NavigateToDest()
+    {
+        if(UserState.IsLoggedIn)
+        {
+            var result = await UserService.LogoutUser();
+            UserState.IsLoggedIn = result.IsLoggedin;
+            Navigation.NavigateTo("login");
+        }
+        else
+        {
+            Navigation.NavigateTo("/login");
+        }
+    }
+}

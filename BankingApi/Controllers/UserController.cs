@@ -35,7 +35,6 @@ namespace BankingApi.Controllers
         [HttpPost]
         [Route("api/user/register")]
         [Produces("application/json")]
-        
         public async Task<IActionResult> RegisterUser([FromBody] ApplicationUser applicationUser)
         {
             ApplicationUser newApiUser = new ApplicationUser(applicationUser.email, applicationUser.password);
@@ -123,6 +122,7 @@ namespace BankingApi.Controllers
                 return StatusCode(400);
             }
         }
+
         [HttpGet]
         [Route("api/user/logout")]
         [Produces("application/json")]
