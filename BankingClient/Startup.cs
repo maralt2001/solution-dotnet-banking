@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using BankingClient.Data;
 using BankingClient.Provider;
 using System.Net;
+using ApiAccess;
 
 namespace BankingClient
 {
@@ -27,6 +28,8 @@ namespace BankingClient
             services.AddScoped<ApiUserService>();
             services.AddScoped<UserState>();
             services.AddScoped<CookieContainer>();
+            services.AddScoped<ApplicationUser>();
+            services.AddScoped<RegisterApplicationUser>();
             
 
         }

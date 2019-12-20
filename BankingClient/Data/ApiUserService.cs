@@ -23,51 +23,51 @@ namespace BankingClient.Data
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
             logoutUrl = configuration.GetSection("BankingApiLogoutPath").Value;
-            
+
         }
 
         // Login Request to api/user/login return LoginResult an Authorization Cookie
         public async Task<LoginResult> LoginUser(ApplicationUser applicationUser)
         {
-            
-            
+
+
             Uri uri = new Uri(loginUrl);
             var json = JsonConvert.SerializeObject(applicationUser);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
-           
+
             using HttpClient client = new HttpClient();
             var response = await client.PostAsync(loginUrl, stringContent);
-           
-             if(response.Headers.Contains(HeaderNames.SetCookie))
-             {
+
+            if (response.Headers.Contains(HeaderNames.SetCookie))
+            {
                 var cookies = response.Headers.GetValues(HeaderNames.SetCookie);
 
                 foreach (var cookie in cookies)
                 {
 
                     _cookieContainer.SetCookies(uri, cookie);
-                    
+
                 }
 
-             }
-           
+            }
+
             var jsonstring = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<LoginResult>(jsonstring);
             return result;
-            
+
         }
 
-       
+
         //Logout Request to api/user/logout return LoginResult and Authorization Cookie be deleted
         public async Task<LoginResult> LogoutUser()
         {
-            
+
             HttpResponseMessage responseMessage;
 
             using HttpClient client = new HttpClient();
             if (_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, logoutUrl),_cookieContainer, loginUrl);
+                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, logoutUrl), _cookieContainer, loginUrl);
                 responseMessage = await client.SendAsync(message);
             }
             else
@@ -77,7 +77,7 @@ namespace BankingClient.Data
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                
+
                 var jsonstring = await responseMessage.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<LoginResult>(jsonstring);
                 return result;
@@ -90,8 +90,27 @@ namespace BankingClient.Data
                 };
                 return result;
             }
-            
+
 
         }
+
+        public async Task<RegisterResult> RegisterUser(ApplicationUser applicationUser)
+        {
+
+            Uri uri = new Uri("http://localhost:5000/api/user/register");
+            var json = JsonConvert.SerializeObject(applicationUser);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using HttpClient client = new HttpClient();
+
+            var response = await client.PostAsync(uri, stringContent);
+            var jsonstring = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<RegisterResult>(jsonstring);
+            return result;
+        }
+
+        
+        
+        
     }
 }

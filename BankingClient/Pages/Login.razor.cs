@@ -12,6 +12,7 @@ namespace BankingClient.Pages
         [Inject] ApiUserService UserService { get; set; }
         [Inject] NavigationManager Navigation { get; set; }
         [Inject] protected UserState UserState { get; set; }
+        [Inject] public ApplicationUser ApplicationUser { get; set; }
 
         [Parameter] public bool Init { get; set; } = true;
         [Parameter] public bool LoginResult { get; set; }
@@ -20,19 +21,16 @@ namespace BankingClient.Pages
 
         public async void LoginUser()
         {
-            var user = new ApplicationUser
-            {
-                email = Username,
-                password = Password
-            };
+            ApplicationUser.email = Username; ApplicationUser.password = Password;
+            
 
-            var result = await UserService.LoginUser(user);
+            var result = await UserService.LoginUser(ApplicationUser);
             
 
             if(result.IsLoggedin)
             {
                 UserState.IsLoggedIn = true;
-                UserState.Username = user.email;
+                UserState.Username = ApplicationUser.email;
                 Init = false;
                 Username = "";
                 Password = "";

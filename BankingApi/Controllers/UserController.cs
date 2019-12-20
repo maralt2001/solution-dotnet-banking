@@ -25,6 +25,7 @@ namespace BankingApi.Controllers
         private readonly ILogger<UserController> _logger;
         private readonly IDBContext _dBContext;
         private readonly LoginResult loginResult = new LoginResult();
+        private readonly RegisterResult registerResult = new RegisterResult();
 
         public UserController(IDBContext dBContext, ILogger<UserController> logger) 
         {
@@ -46,11 +47,13 @@ namespace BankingApi.Controllers
 
                 if (result)
                 {
-                     return Ok("User Account is created");
+                     registerResult.IsRegistered = true;
+                     return Ok(registerResult);
                 }
                 else
                 {
-                     return StatusCode(400, "Account is not created");
+                     registerResult.IsRegistered = false;
+                     return StatusCode(400, registerResult);
                 }
 
             }

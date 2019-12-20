@@ -1,0 +1,39 @@
+﻿@page "/register"
+@inherits RegisterBase
+
+    <div class="container pt-3" style="width: 40%">
+        <h2>Register</h2>
+        <p>Enter your Credentials</p>
+
+        <EditForm Model="@RegisterApplicationUser" OnValidSubmit="@RegisterUser">
+            <DataAnnotationsValidator />
+            <label for="user">Email:</label>
+            <InputText class="form-control" id="user" type="email" @bind-Value="@Username" placeholder="..." />
+            <p />
+            <label for="password">Password:</label>
+            <InputText class="form-control" id="password" type="password" @bind-Value="@Password" placeholder="..." />
+            <p />
+            <label for="Confirm Password:">Confirm Password:</label>
+            <InputText class="form-control" id="ConfirmPassword" type="password" @bind-Value="@ConfirmPassword" placeholder="..." />
+            <ValidationSummary />
+            <button style="margin-top: 25px" type="submit" class="btn btn-primary">Submit</button>
+        </EditForm>
+
+
+        @if (RegisterResult == true && Init == false)
+        {
+
+            <div class="alert alert-success" style="margin-top:25px">
+                <strong>Success!</strong> You are registered successfully
+            </div>
+
+        }
+        else if (RegisterResult == false && Init == false)
+        {
+            <div class="alert alert-danger" style="margin-top:25px">
+                <strong>Error!</strong> You are not registered
+            </div>
+        }
+
+
+    </div>
