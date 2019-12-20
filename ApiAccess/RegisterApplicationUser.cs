@@ -24,7 +24,7 @@ namespace ApiAccess
             this.confirmPassword = HashPassword(confirmPassword).Result;
         }
 
-        public Task<bool> ValidatePasswords()
+        public Task<bool> ComparePasswords()
         {
             var result = Task.Run(() => { 
             

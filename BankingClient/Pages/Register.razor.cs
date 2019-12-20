@@ -30,7 +30,7 @@ namespace BankingClient.Pages
             RegisterApplicationUser.password = Password;
             RegisterApplicationUser.confirmPassword = ConfirmPassword;
 
-            if(await RegisterApplicationUser.ValidatePasswords())
+            if(await RegisterApplicationUser.ComparePasswords())
             {
 
                 ApplicationUser.email = Username; ApplicationUser.password = Password;

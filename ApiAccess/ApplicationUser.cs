@@ -29,8 +29,8 @@ namespace ApiAccess
         {
             this.email = email;
             this.password = HashPassword(password).Result;
-            this.createdAt = DateTime.Now;
-            this.accessFailedCount = 0;
+            createdAt = DateTime.Now;
+            accessFailedCount = 0;
         }
 
 
