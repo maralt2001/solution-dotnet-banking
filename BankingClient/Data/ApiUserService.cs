@@ -2,13 +2,11 @@
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using BankingApi.Models;
-using Microsoft.Net.Http.Headers;
 using System.Net;
-using BankingClient.Provider;
 using Microsoft.Extensions.Configuration;
+using static HttpService.Content;
 
 namespace BankingClient.Data
 {
@@ -32,35 +30,27 @@ namespace BankingClient.Data
         public async Task<LoginResult> LoginUser(ApplicationUser applicationUser)
         {
 
-
+            StringContent content = await GetSerializeStringContentAsync(applicationUser);
             Uri uri = new Uri(loginUrl);
-            var json = JsonConvert.SerializeObject(applicationUser);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             using HttpClient client = new HttpClient();
-            var response = await client.PostAsync(loginUrl, stringContent);
+            var response = await client.PostAsync(loginUrl, content);
 
-            if (response.Headers.Contains(HeaderNames.SetCookie) && response.IsSuccessStatusCode)
+            var cookies = await GetCookiesAsync(response);
+
+            if(cookies != null)
             {
-                var cookies = response.Headers.GetValues(HeaderNames.SetCookie);
-
                 foreach (var cookie in cookies)
                 {
-
                     _cookieContainer.SetCookies(uri, cookie);
-
                 }
                 var jsonstring = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<LoginResult>(jsonstring);
-                return result;
-
+                return await GetDeserializeObjectAsync<LoginResult>(jsonstring);
             }
             else
             {
                 return new LoginResult { IsLoggedin = false };
             }
-
-            
 
         }
 
@@ -73,7 +63,8 @@ namespace BankingClient.Data
             using HttpClient client = new HttpClient();
             if (_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, logoutUrl), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, logoutUrl), _cookieContainer, loginUrl);
+                
                 responseMessage = await client.SendAsync(message);
             }
             else
@@ -103,19 +94,17 @@ namespace BankingClient.Data
         //Register Request to api/user/register return a RegisterResult
         public async Task<RegisterResult> RegisterUser(ApplicationUser applicationUser)
         {
-
+            StringContent content = await GetSerializeStringContentAsync(applicationUser);
             Uri uri = new Uri(registerUrl);
-            var json = JsonConvert.SerializeObject(applicationUser);
-            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
             using HttpClient client = new HttpClient();
 
-            var response = await client.PostAsync(uri, stringContent);
+            var response = await client.PostAsync(uri, content);
             if(response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<RegisterResult>(jsonstring);
-                return result;
+                return await GetDeserializeObjectAsync<RegisterResult>(jsonstring);
+               
             }
             else
             {

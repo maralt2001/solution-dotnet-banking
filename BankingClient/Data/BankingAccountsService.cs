@@ -1,11 +1,11 @@
 ﻿using BankingApi.Models;
-using BankingClient.Provider;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using static HttpService.Content;
 
 namespace BankingClient.Data
 {
@@ -31,7 +31,7 @@ namespace BankingClient.Data
             using HttpClient client = new HttpClient();
             if(_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await CookieHelper.PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 responseMessage = await client.SendAsync(message);
             }
             else
@@ -42,10 +42,8 @@ namespace BankingClient.Data
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonstring = await responseMessage.Content.ReadAsStringAsync();
-
-                var result = JsonConvert.DeserializeObject<BankingAccount[]>(jsonstring);
-
-                return result;
+                return await GetDeserializeObjectAsync<BankingAccount[]>(jsonstring);
+                
             }
 
             return new BankingAccount[0];
