@@ -49,6 +49,7 @@ namespace BankingClient
 
             app.UseStaticFiles();
             app.UseRouting();
+            
 
             app.UseEndpoints(endpoints =>
             {

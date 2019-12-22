@@ -32,16 +32,28 @@ services:
     depends_on:
       - mongo
 
-  bankingApi:
+  bankingapi:
     image: bankingapi
+    container_name: banking-api
     build: 
       context: ./
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.bankingapi
     ports: 
       - 5001:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-     
-     
     depends_on:
       - mongo
+
+  bankingclient:
+    image: bankingclient
+    container_name: banking-client
+    build: 
+      context: ./
+      dockerfile: Dockerfile.bankingclient
+    ports: 
+      - 5005:80
+    depends_on: 
+      - bankingapi
+
+  
