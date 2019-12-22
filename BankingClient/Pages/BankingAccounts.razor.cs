@@ -1,4 +1,4 @@
-﻿using BankingApi.Models;
+﻿using ApiDataService;
 using BankingClient.Data;
 using Microsoft.AspNetCore.Components;
 using System;

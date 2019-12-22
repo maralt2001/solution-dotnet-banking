@@ -1,11 +1,9 @@
 ﻿using ApiAccess;
+using ApiDataService;
 using BankingClient.Data;
 using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace BankingClient.Pages
 {
@@ -34,7 +32,7 @@ namespace BankingClient.Pages
             {
 
                 ApplicationUser.email = Username; ApplicationUser.password = Password;
-                var result = await UserService.RegisterUser(ApplicationUser);
+                RegisterResult result = await UserService.RegisterUser(ApplicationUser);
 
                 if(result.IsRegistered)
                 {

@@ -16,8 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BankingApi\BankingApi.csproj" />
-    <ProjectReference Include="..\HttpService\HttpService.csproj" />
+    <ProjectReference Include="..\ApiAccess\ServiceApiAccess.csproj" />
+    <ProjectReference Include="..\ApiDataService\ServiceApiData.csproj" />
+    <ProjectReference Include="..\HttpService\ServiceHttp.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

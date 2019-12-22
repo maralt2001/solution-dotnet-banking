@@ -36,8 +36,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ApiAccess\ApiAccess.csproj" />
-    <ProjectReference Include="..\MongoDBContext\MongoService.csproj" />
+    <ProjectReference Include="..\ApiAccess\ServiceApiAccess.csproj" />
+    <ProjectReference Include="..\ApiDataService\ServiceApiData.csproj" />
+    <ProjectReference Include="..\MongoDBContext\ServiceMongo.csproj" />
   </ItemGroup>
 
 </Project>

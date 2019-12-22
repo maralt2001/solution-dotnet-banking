@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using BankingApi.Models;
+using ApiDataService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoService;
-using ApiAccess;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

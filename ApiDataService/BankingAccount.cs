@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 
-namespace BankingApi.Models
+namespace ApiDataService
 {
     public class BankingAccount : IBankingAccount
     {
@@ -25,7 +24,7 @@ namespace BankingApi.Models
 
         public AccountChanged changed { get; set; }
 
-        internal void Deconstruct(out string id, out string firstname, out string lastname, out bool? isActive, out DateTime? createdAt, out AccountChanged changed)
+        public void Deconstruct(out string id, out string firstname, out string lastname, out bool? isActive, out DateTime? createdAt, out AccountChanged changed)
         {
             id = this._id;
             firstname = this.firstname;
@@ -35,7 +34,7 @@ namespace BankingApi.Models
             changed = this.changed;
         }
 
-        internal BankingAccount AddChanged(in DateTime dateTime, in string changedby)
+        public BankingAccount AddChanged(in DateTime dateTime, in string changedby)
         {
             
             changed = new AccountChanged
@@ -46,13 +45,13 @@ namespace BankingApi.Models
             return this;
         }
 
-        internal BankingAccount AddCreateAt(in DateTime dateTime)
+        public BankingAccount AddCreateAt(in DateTime dateTime)
         {
             createdAt = dateTime;
             return this;
         }
 
-        internal KeyValuePair<string, string> GetKeyValueOf(string propertyName)
+        public KeyValuePair<string, string> GetKeyValueOf(string propertyName)
         {
             Type type = this.GetType();
             PropertyInfo[] props = type.GetProperties();

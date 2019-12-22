@@ -12,7 +12,7 @@ using MongoService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using BankingApi.Models;
+using ApiDataService;
 
 namespace BankingApi.Controllers
 {

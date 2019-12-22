@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BankingApi.Models
+namespace ApiDataService
 {
     public interface IBankingAccount
     {

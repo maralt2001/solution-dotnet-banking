@@ -2,7 +2,7 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
-    "commandLineArgs": "--urls=http://localhost:5005",
+    
 
     "iisExpress": {
       "applicationUrl": "http://localhost:50410",

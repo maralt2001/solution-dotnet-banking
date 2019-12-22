@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using BankingApi.Models;
 using System.Net;
 using Microsoft.Extensions.Configuration;
+using ApiDataService;
 using static HttpService.Content;
 
 namespace BankingClient.Data

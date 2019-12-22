@@ -1,5 +1,5 @@
 ﻿using ApiAccess;
-using BankingApi.Models;
+using ApiDataService;
 using BankingClient.Data;
 using BankingClient.Provider;
 using Microsoft.AspNetCore.Components;
@@ -24,7 +24,7 @@ namespace BankingClient.Pages
             ApplicationUser.email = Username; ApplicationUser.password = Password;
             
 
-            var result = await UserService.LoginUser(ApplicationUser);
+            LoginResult result = await UserService.LoginUser(ApplicationUser);
             
 
             if(result.IsLoggedin)
