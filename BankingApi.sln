@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingApi", "BankingApi\Ba
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BankingClient", "BankingClient\BankingClient.csproj", "{1EDC5D34-7F5C-4D9A-8497-BDA142117111}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceMongo", "MongoDBContext\ServiceMongo.csproj", "{B3398516-D03E-4130-918F-F64CFAA04B6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceMongo", "ServiceMongo\ServiceMongo.csproj", "{B3398516-D03E-4130-918F-F64CFAA04B6D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceApiAccess", "ApiAccess\ServiceApiAccess.csproj", "{CEBB0930-D1B5-4EC4-818E-E896800BF531}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceApiAccess", "ServiceApiAccess\ServiceApiAccess.csproj", "{CEBB0930-D1B5-4EC4-818E-E896800BF531}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceHttp", "HttpService\ServiceHttp.csproj", "{A358A537-7DC4-41B3-87DF-0F2956684CD0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceHttp", "ServiceHttp\ServiceHttp.csproj", "{A358A537-7DC4-41B3-87DF-0F2956684CD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceApiData", "ApiDataService\ServiceApiData.csproj", "{16387E5D-D6E5-4729-BC6A-0084254DA5AD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceApiData", "ServiceApiData\ServiceApiData.csproj", "{16387E5D-D6E5-4729-BC6A-0084254DA5AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{7BEB350D-6BAE-4167-9531-66FE47198303}"
 EndProject
