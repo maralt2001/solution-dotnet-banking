@@ -76,11 +76,16 @@ namespace BankingClient.Pages
         }
 
         // Method for close Children ViewAccountDetails
-        public void CloseAccountDetails(bool Value)
+        public async void CloseAccountDetails(bool Value)
         {
+            var result = Task.Run(() =>
+            {
                 _ShowDetails = false;
                 _Account = new BankingAccount();
-                StateHasChanged();
+            });
+
+            await result;
+            StateHasChanged();
         }
 
         // Method clear the BankingAccountStore and handle the Button states
@@ -91,11 +96,12 @@ namespace BankingClient.Pages
                 _BankingAccountStore = new BankingAccountStore();
                 _ResetButtonIsDisabled = true;
                 _GetAllButtonIsDisabled = false;
-                StateHasChanged();
+                
             });
 
             await result;
-          
+            StateHasChanged();
+
         }
 
         // Method handle the Button states
