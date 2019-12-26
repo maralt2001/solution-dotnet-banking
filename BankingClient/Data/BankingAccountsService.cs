@@ -1,6 +1,7 @@
 ﻿using ApiDataService;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -14,12 +15,14 @@ namespace BankingClient.Data
         private readonly CookieContainer _cookieContainer;
         private readonly string loginUrl;
         private readonly string getAllAccountsFromApi;
+        private readonly string getOneAccountRegexFromApi;
 
         public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration)
         {
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
             getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
+            getOneAccountRegexFromApi = configuration.GetSection("BankingApiGetOneAccountRegex").Value;
         }
 
         // Request api/banking/accounts/getall + set Authorization Cookie
@@ -47,6 +50,42 @@ namespace BankingClient.Data
             }
 
             return new BankingAccount[0];
+        }
+
+        public Task<BankingAccount> GetOneAccountAsync(string field, string value)
+        {
+            var result = Task.Run(async() => 
+            {
+                HttpResponseMessage response;
+                string concatUrl = ($"{getOneAccountRegexFromApi}?field={field}&regexvalue={value}");
+
+                using HttpClient client = new HttpClient();
+
+                if (_cookieContainer.Count > 0)
+                {
+                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, concatUrl), _cookieContainer, loginUrl);
+                    response = await client.SendAsync(message);
+                }
+                else
+                {
+                    response = await client.GetAsync(concatUrl);
+                }
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonstring = await response.Content.ReadAsStringAsync();
+
+                    return await GetDeserializeObjectAsync<BankingAccount>(jsonstring);
+                }
+                else
+                {
+                    return new BankingAccount();
+                }
+
+            });
+
+            return result;
+            
         }
 
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()

@@ -1,77 +1,99 @@
 ﻿using ApiDataService;
 using BankingClient.Data;
 using Microsoft.AspNetCore.Components;
-using System;
+using BankingClient.Provider;
+using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankingClient.Pages
 {
     public class BaseBankingAccounts : ComponentBase
     {
-        [Inject] BankingAccountsService AccountService { get; set; }
+        #region Dependency Injections
+        [Inject] public BankingAccountStore _BankingAccountStore { get; set; }
+        [Inject] private BankingAccountsService _BankingAccountService { get; set; }
+        [Inject] public UserState _UserState { get; set; }
+        #endregion
 
-        [Parameter] public BankingAccount[] Accounts { get; set; }
-        [Parameter] public BankingAccount[] Cache { get; set; }
-        [Parameter] public int Count { get; set; }
+        #region Page Parameter/Variables
+        [Parameter] public bool _ResetButtonIsDisabled { get; set; } = true;
+        [Parameter] public bool _GetAllButtonIsDisabled { get; set; } = false;
+        [Parameter] public bool _GoButtonIsDisabled { get; set; } = true;
+
+        [Parameter] public string _SearchTextValue { get; set; } = "";
+        [Parameter] public List<string> _SearchOptions { get; set; } = new List<string>() { "Firstname", "Lastname" };
+        [Parameter] public string _SelectedOption { get; set; } = "Firstname";
+
+        [Parameter] public bool _ShowDetails { get; set; } = false;
+        [Parameter] public BankingAccount _Account { get; set; }
+        #endregion
 
 
-        [Parameter] public string Value { get; set; }
-        [Parameter] public Dictionary<string, Object> ButtonResetDictionary { get; set; } = new Dictionary<string, object>();
-
-        [Parameter] public bool IsTableRowClicked { get; set; }
-        [Parameter] public BankingAccount TableRowAccount { get; set; }
-
-        // are called when the search button is clicked
-        public void SearchValue()
+        // Method for get all Accounts via Api call. The call is providet by Data.BankingAccountService
+        public async void GetAllAccounts()
         {
-            var result = Accounts.Where(s => s.firstname == Value || s.lastname == Value).ToArray();
-            Count = result.Length;
-            Value = "";
-            ButtonResetDictionary.Remove("disabled");
-            Accounts = result;
-        }
-
-        //are called when the reset button is clicked the table will be refreshed
-        public void ResetTable()
-        {
-            Accounts = Cache;
-            Count = Cache.Length;
-            ButtonResetDictionary.Add("disabled", true);
-
-        }
-
-        // are called when a row in the table is clicked
-        public void ViewAccountDetails(BankingAccount oneAccount)
-        {
-            IsTableRowClicked = true;
-            TableRowAccount = oneAccount;
+            _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
+            _ResetButtonIsDisabled = false;
+            _GetAllButtonIsDisabled = true;
+            StateHasChanged();
 
         }
 
-        //are called from ViewAccountDetails Component if ModalClosed -> Child Return Action
-        public void ShowAccountDetails(bool value)
+        public void SetSelectedOption(ChangeEventArgs e)
         {
-            IsTableRowClicked = false;
+            _SelectedOption = e.Value.ToString();
+        }
+
+        // Method for search an Account via Api call. The call is providet by Data.BankingAccountService
+        public async void SearchAccount()
+        {
+            
+            var result = _BankingAccountService.GetOneAccountAsync(_SelectedOption.ToLower(), _SearchTextValue);
+            _BankingAccountStore.SetBankingAccountToBlob(await result);
+            _ResetButtonIsDisabled = false;
+            _GoButtonIsDisabled = true;
+            _SearchTextValue = "";
+            
+            StateHasChanged();
+
+        }
+
+        // Method for Render Children ViewAccountDetails
+        public void ShowAccountDetails(BankingAccount account)
+        {
+            _ShowDetails = true;
+            _Account = account;
+        }
+
+        // Method for close Children ViewAccountDetails
+        public void CloseAccountDetails(bool Value)
+        {
+            _ShowDetails = false;
+            _Account = new BankingAccount();
             StateHasChanged();
         }
 
-        //are called when a component is first initialised and each time new or updated parameters are received from the parent in the render tree.
-        protected override async Task OnParametersSetAsync()
+        // Method clear the BankingAccountStore and handle the Button states
+        public void ResetTable()
         {
-            var setInitStates = Task.Run(() => ButtonResetDictionary.Add("disabled", true));
-            await setInitStates;
+            _BankingAccountStore = new BankingAccountStore();
+            _ResetButtonIsDisabled = true;
+            _GetAllButtonIsDisabled = false;
+            StateHasChanged();
         }
 
-        //Once the component has received its initial parameters from its parent in the render tree
-        protected override async Task OnInitializedAsync()
+        // Method handle the Button states
+        public void EnableGoButton(KeyboardEventArgs args)
         {
-            Accounts = await AccountService.GetAccountsAsync();
-
-            Cache = Accounts;
-            Count = Accounts.Length;
-
+            _GoButtonIsDisabled = false;
+            _GetAllButtonIsDisabled = true;
+            StateHasChanged();
         }
+
+        protected override void OnInitialized()
+        {
+            _BankingAccountStore = new BankingAccountStore();
+        }
+
     }
 }

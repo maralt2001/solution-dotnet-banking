@@ -5,54 +5,74 @@
 
 
 
-<h1>Banking Accounts</h1>
 
-<p>This component demonstrates fetching data from the BankingApi.</p>
-
-@if (Accounts == null)
+@if (_UserState.IsLoggedIn == true)
 {
-    <p><em>Loading...</em></p>
+    <div class="container ml-1 col-5"> 
+        <h2>Banking Accounts Workbook</h2>
+        <br />
+        <div class="input-group">
+            <input class="form-control" type="text" placeholder="search" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton"/>
+            <div class="input-group-append">
+                <select @onchange="@SetSelectedOption">
+                    @foreach (var item in _SearchOptions)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+                <button class="btn btn-success" disabled="@_GoButtonIsDisabled" type="button" style="margin-left:3px" @onclick="SearchAccount">Go</button>
+                <button class="btn btn-success" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled" type="button" style="margin-left:3px">Get All</button>
+                <button class="btn btn-danger" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled" type="button" style="margin-left:3px">Reset</button>
+            </div>
+        </div>
+        <p/>
+        <TableEntryCount TableCount="@_BankingAccountStore.Blob.Length"></TableEntryCount>
+    </div>
+    <p/>
+    <div class="container ml-1 col-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Firstname</th>
+                    <th>Lastname</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+            @if(_BankingAccountStore.Blob.Length >0 && _BankingAccountStore.Blob.FirstOrDefault() != null)
+            {
+            <tbody>
+                
+                   @foreach(var account in _BankingAccountStore.Blob)
+                    {
+                    <tr @onclick="@(a => ShowAccountDetails(account))">
+                      <td>@account._id</td>
+                      <td>@account.firstname</td>
+                      <td>@account.lastname</td>
+                      <td>@account.isActive</td>
+                    </tr>
+                    }
+                
+            </tbody>
+            }
+            else
+            {
+                
+            }
+        </table>
+    </div>
+    if(_ShowDetails == true)
+    {
+      <ViewAccountDetails Account="@_Account" ShowDetailAccountview="@CloseAccountDetails"></ViewAccountDetails>
+    }
+
 }
 else
 {
-
-    <div class="input-group mb-3 col-sm-6">
-        <input type="text" class="form-control" placeholder="Search" @bind="@Value" />
-        <div class="input-group-append">
-            <button class="btn btn-success" type="button" @onclick="@SearchValue" style="margin-left: 5px">Go</button>
-            <button class="btn btn-danger" @attributes="@ButtonResetDictionary" type="button" @onclick="@ResetTable" style="margin-left: 5px">Reset</button>
-        </div>
-    </div>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Firstname</th>
-                <th>Lastname</th>
-                <th>Active</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var account in Accounts)
-            {
-                <tr @onclick="@(e => ViewAccountDetails(account))">
-                    <td>@account._id</td>
-                    <td>@account.firstname</td>
-                    <td>@account.lastname</td>
-                    <td>@account.isActive</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <TableEntryCount TableCount="@Count"></TableEntryCount>
-
-    if (IsTableRowClicked)
-    {
-
-        <ViewAccountDetails Account="@TableRowAccount" ShowDetailAccountview="ShowAccountDetails"></ViewAccountDetails>
-    }
-
-
-
+<div class="alert alert-danger" style="margin-top:25px">
+    <strong>Login Required</strong> You are not logged in. You must <a href="login">login</a> or <a href="register">register</a> an account
+</div>
 }
+
+
+

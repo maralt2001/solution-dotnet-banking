@@ -14,8 +14,11 @@ namespace ApiAccess
         [BsonRepresentation(BsonType.ObjectId)]
         [ReadOnly(true)]
         public string _id { get; set; }
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Please enter a valid email adress")]
+        [Required]
         public string email { get; set; }
+        [Required]
+        [StringLength(20, ErrorMessage ="Password can not be longer than 20 char")]
         public string password { get; set; }
         public int accessFailedCount { get; set; }
         public DateTime createdAt { get; set; }

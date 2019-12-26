@@ -27,6 +27,7 @@ namespace BankingClient
             services.AddScoped<BankingAccountsService>();
             services.AddScoped<ApiUserService>();
             services.AddScoped<UserState>();
+            services.AddScoped<BankingAccountStore>();
             services.AddScoped<CookieContainer>();
             services.AddScoped<ApplicationUser>();
             services.AddScoped<RegisterApplicationUser>();

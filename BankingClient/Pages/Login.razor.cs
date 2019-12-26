@@ -16,24 +16,19 @@ namespace BankingClient.Pages
 
         [Parameter] public bool Init { get; set; } = true;
         [Parameter] public bool LoginResult { get; set; }
-        [Parameter] public string Username { get; set; }
-        [Parameter] public string Password { get; set; }
+       
+     
 
         public async void LoginUser()
         {
-            ApplicationUser.email = Username; ApplicationUser.password = Password;
-            
-
             LoginResult result = await UserService.LoginUser(ApplicationUser);
-            
 
             if(result.IsLoggedin)
             {
                 UserState.IsLoggedIn = true;
                 UserState.Username = ApplicationUser.email;
                 Init = false;
-                Username = "";
-                Password = "";
+                ApplicationUser = new ApplicationUser();
                 Navigation.NavigateTo("bankingaccounts");
             }
             else
@@ -41,14 +36,17 @@ namespace BankingClient.Pages
                 UserState.IsLoggedIn = false;
                 UserState.Username = "";
                 Init = false;
-                Password = "";
-                Username = "";
+                ApplicationUser = new ApplicationUser();
             }
-            
 
             StateHasChanged();
-            
 
+        }
+
+        protected override void OnInitialized()
+        {
+            ApplicationUser = new ApplicationUser();
+            StateHasChanged();
 
         }
     }
