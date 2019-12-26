@@ -17,6 +17,12 @@ namespace BankingClient.Provider
             this.Blob = array;
             
         }
+
+        public void SetBankingAccountsToBlob (BankingAccount[] bankingAccounts)
+        {
+            BankingAccount[] array = bankingAccounts;
+            this.Blob = array;
+        }
         
     }
 

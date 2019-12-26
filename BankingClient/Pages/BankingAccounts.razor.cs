@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using BankingClient.Provider;
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BankingClient.Pages
 {
@@ -39,17 +40,21 @@ namespace BankingClient.Pages
 
         }
 
-        public void SetSelectedOption(ChangeEventArgs e)
+        public async void SetSelectedOption(ChangeEventArgs e)
         {
-            _SelectedOption = e.Value.ToString();
+            var result = Task.Run(() =>
+            {
+                _SelectedOption = e.Value.ToString();
+            });
+
+            await result;
         }
 
         // Method for search an Account via Api call. The call is providet by Data.BankingAccountService
         public async void SearchAccount()
         {
-            
-            var result = _BankingAccountService.GetOneAccountAsync(_SelectedOption.ToLower(), _SearchTextValue);
-            _BankingAccountStore.SetBankingAccountToBlob(await result);
+            Task<BankingAccount[]> result = _BankingAccountService.GetAccountsRegexAsync(_SelectedOption.ToLower(), _SearchTextValue);
+            _BankingAccountStore.SetBankingAccountsToBlob(await result);
             _ResetButtonIsDisabled = false;
             _GoButtonIsDisabled = true;
             _SearchTextValue = "";
@@ -59,27 +64,38 @@ namespace BankingClient.Pages
         }
 
         // Method for Render Children ViewAccountDetails
-        public void ShowAccountDetails(BankingAccount account)
+        public async void ShowAccountDetails(BankingAccount account)
         {
-            _ShowDetails = true;
-            _Account = account;
+            var result = Task.Run(() => 
+            {
+                _ShowDetails = true;
+                _Account = account;
+            });
+
+            await result;
         }
 
         // Method for close Children ViewAccountDetails
         public void CloseAccountDetails(bool Value)
         {
-            _ShowDetails = false;
-            _Account = new BankingAccount();
-            StateHasChanged();
+                _ShowDetails = false;
+                _Account = new BankingAccount();
+                StateHasChanged();
         }
 
         // Method clear the BankingAccountStore and handle the Button states
-        public void ResetTable()
+        public async void ResetTable()
         {
-            _BankingAccountStore = new BankingAccountStore();
-            _ResetButtonIsDisabled = true;
-            _GetAllButtonIsDisabled = false;
-            StateHasChanged();
+            var result = Task.Run(() => 
+            {
+                _BankingAccountStore = new BankingAccountStore();
+                _ResetButtonIsDisabled = true;
+                _GetAllButtonIsDisabled = false;
+                StateHasChanged();
+            });
+
+            await result;
+          
         }
 
         // Method handle the Button states
@@ -90,9 +106,15 @@ namespace BankingClient.Pages
             StateHasChanged();
         }
 
-        protected override void OnInitialized()
+        protected override async void OnInitialized()
         {
-            _BankingAccountStore = new BankingAccountStore();
+            var result = Task.Run(() => 
+            {
+                _BankingAccountStore = new BankingAccountStore();
+            });
+
+            await result;
+            
         }
 
     }

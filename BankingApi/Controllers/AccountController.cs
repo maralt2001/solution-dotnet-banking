@@ -220,6 +220,24 @@ namespace BankingApi.Controllers
         }
 
         [HttpGet]
+        [Route("api/banking/accounts/getaccountsregex")]
+        [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetAccountsRegex([FromQuery] string field, string regexvalue)
+        {
+            try
+            {
+                var result = await _dBContext.LoadRecordsRegexAsync<BankingAccount>("Banking_Accounts", field, regexvalue);
+                return Ok(result);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet]
         [Route("api/banking/accounts/take")]
         [Produces("application/json")]
 

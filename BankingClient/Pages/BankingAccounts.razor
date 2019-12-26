@@ -12,25 +12,25 @@
         <h2>Banking Accounts Workbook</h2>
         <br />
         <div class="input-group">
-            <input class="form-control" type="text" placeholder="search" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton"/>
+            <input class="form-control" type="text" placeholder="search by" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton"/>
             <div class="input-group-append">
-                <select @onchange="@SetSelectedOption">
+                <select class="custom-select" @onchange="@SetSelectedOption">
                     @foreach (var item in _SearchOptions)
                     {
                         <option value="@item">@item</option>
                     }
                 </select>
-                <button class="btn btn-success" disabled="@_GoButtonIsDisabled" type="button" style="margin-left:3px" @onclick="SearchAccount">Go</button>
-                <button class="btn btn-success" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled" type="button" style="margin-left:3px">Get All</button>
-                <button class="btn btn-danger" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled" type="button" style="margin-left:3px">Reset</button>
+                <button class="btn btn-outline-success" disabled="@_GoButtonIsDisabled" type="button" style="margin-left:3px" @onclick="SearchAccount">Go</button>
+                <button class="btn btn-outline-success" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled" type="button" style="margin-left:3px">All</button>
+                <button class="btn btn-outline-danger" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled" type="button" style="margin-left:3px; height:38px">Reset</button>
             </div>
         </div>
         <p/>
         <TableEntryCount TableCount="@_BankingAccountStore.Blob.Length"></TableEntryCount>
     </div>
     <p/>
-    <div class="container ml-1 col-12">
-        <table class="table table-striped">
+    <div class="container ml-1 col-9">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th>ID</th>
