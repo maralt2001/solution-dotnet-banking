@@ -45,6 +45,8 @@ services:
      - BankingApiLogoutPath=http://banking-api/api/user/logout
      - BankingApiRegisterPath=http://banking-api/api/user/register
      - BankingApiGetAllAccounts=http://banking-api/api/banking/accounts/getall
+     - BankingApiGetOneAccountRegex="http://banking-api/api/banking/account/getoneregex"
+     - BankingApiGetAccountsRegex="http://banking-api/api/banking/accounts/getaccountsregex"
     depends_on: 
       - bankingapi
 

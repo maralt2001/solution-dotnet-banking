@@ -7,6 +7,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using static HttpService.Content;
+using System;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BankingClient.Data
 {
@@ -17,6 +19,7 @@ namespace BankingClient.Data
         private readonly string getAllAccountsFromApi;
         private readonly string getOneAccountRegexFromApi;
         private readonly string getAccountsRegexFromApi;
+       
 
         public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration)
         {
@@ -25,6 +28,7 @@ namespace BankingClient.Data
             getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
             getOneAccountRegexFromApi = configuration.GetSection("BankingApiGetOneAccountRegex").Value;
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
+            
         }
 
         // Request api/banking/accounts/getall + set Authorization Cookie
@@ -59,18 +63,25 @@ namespace BankingClient.Data
             var result = Task.Run(async() => 
             {
                 HttpResponseMessage response;
-                string concatUrl = ($"{getOneAccountRegexFromApi}?field={field}&regexvalue={value}");
+
+                var query = new Dictionary<string, string>
+                {
+                    { "field", field },
+                    { "regexvalue", value }
+                };
+                // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
+                string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
 
                 using HttpClient client = new HttpClient();
 
                 if (_cookieContainer.Count > 0)
                 {
-                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, concatUrl), _cookieContainer, loginUrl);
+                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
                     response = await client.SendAsync(message);
                 }
                 else
                 {
-                    response = await client.GetAsync(concatUrl);
+                    response = await client.GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -95,18 +106,26 @@ namespace BankingClient.Data
             var result = Task.Run(async () =>
             {
                 HttpResponseMessage response;
-                string concatUrl = ($"{getAccountsRegexFromApi}?field={field}&regexvalue={value}");
+
+                var query = new Dictionary<string, string>
+                {
+                    { "field", field },
+                    { "regexvalue", value }
+                };
+
+                // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
+                string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
 
                 using HttpClient client = new HttpClient();
 
                 if (_cookieContainer.Count > 0)
                 {
-                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, concatUrl), _cookieContainer, loginUrl);
+                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
                     response = await client.SendAsync(message);
                 }
                 else
                 {
-                    response = await client.GetAsync(concatUrl);
+                    response = await client.GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)

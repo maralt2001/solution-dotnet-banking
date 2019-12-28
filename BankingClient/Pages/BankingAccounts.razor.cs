@@ -53,6 +53,7 @@ namespace BankingClient.Pages
         // Method for search an Account via Api call. The call is providet by Data.BankingAccountService
         public async void SearchAccount()
         {
+            
             Task<BankingAccount[]> result = _BankingAccountService.GetAccountsRegexAsync(_SelectedOption.ToLower(), _SearchTextValue);
             _BankingAccountStore.SetBankingAccountsToBlob(await result);
             _ResetButtonIsDisabled = false;
