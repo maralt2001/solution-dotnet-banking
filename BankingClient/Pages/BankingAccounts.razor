@@ -8,11 +8,11 @@
 
 @if (_UserState.IsLoggedIn == true)
 {
-    <div class="container ml-1 col-5"> 
+    <div class="container ml-1 col-6"> 
         <h2>Banking Accounts Workbook</h2>
         <br />
         <div class="input-group">
-            <input class="form-control" type="text" placeholder="search by" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton"/>
+            <input class="form-control" type="text" placeholder="search by" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton" />
             <div class="input-group-append">
                 <select class="custom-select" @onchange="@SetSelectedOption">
                     @foreach (var item in _SearchOptions)
@@ -20,13 +20,20 @@
                         <option value="@item">@item</option>
                     }
                 </select>
-                <button class="btn btn-outline-success" disabled="@_GoButtonIsDisabled" type="button" style="margin-left:3px" @onclick="SearchAccount">Go</button>
-                <button class="btn btn-outline-success" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled" type="button" style="margin-left:3px">All</button>
-                <button class="btn btn-outline-danger" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled" type="button" style="margin-left:3px; height:38px">Reset</button>
+                <div class="btn-group">
+                    <button class="btn btn-outline-success" @attributes="@_ButtonAttributes" disabled="@_GoButtonIsDisabled" @onclick="SearchAccount">Go</button>
+                    <button class="btn btn-outline-success" @attributes="@_ButtonAttributes" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled">All</button>
+                    <button class="btn btn-outline-danger" @attributes="@_ButtonAttributes" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled">Reset</button>
+                    <button class="btn btn-outline-info" style="margin-left:10px; width:200px" @onclick="@GotoNewAccount">New Account</button>
+                </div>
+                
             </div>
         </div>
         <p/>
-        <TableEntryCount TableCount="@_BankingAccountStore.Blob.Length"></TableEntryCount>
+        <div class="custom-control-inline">
+            <TableEntryCount TableCount="@_BankingAccountStore.Blob.Length"></TableEntryCount>
+        </div>
+        
     </div>
     <p/>
     <div class="container ml-1 col-9">

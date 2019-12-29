@@ -1,0 +1,44 @@
+﻿@page "/newaccount"
+@inherits NewAccountBase
+
+@if (_UserState.IsLoggedIn == true)
+{
+
+    <div class="container ml-1 col-5">
+        <h2>Create a new Banking Account</h2>
+        <br />
+        <EditForm Model="@_BankingAccount" OnInvalidSubmit="@SaveAccount">
+            <DataAnnotationsValidator />
+            <label for="firstname">Firstname:</label>
+            <InputText class="form-control" id="firstname" @bind-Value="@_firstname" placeholder="..."></InputText>
+            <ValidationMessage For="@(() => _BankingAccount.firstname)" />
+            <p></p>
+            <label for="lastname">Lastname:</label>
+            <InputText class="form-control" id="lastname" @bind-Value="@_lastname" placeholder="..."></InputText>
+            <ValidationMessage For="@(() => _BankingAccount.lastname)" />
+            <p></p>
+            <label class="form-check-label" for="isActive">Active:</label>
+            <InputCheckbox id="isActive" @bind-Value="@_isActive"></InputCheckbox>
+            <p></p>
+            <button style="margin-top: 25px" type="submit" class="btn btn-primary">Submit</button>
+
+        </EditForm>
+        @if (_isAccountSaved == true)
+        {
+            <div class="alert alert-success" style="margin-top:25px">
+                <strong>Success!</strong> The Account is saved successfully
+            </div>
+        }
+
+    </div>
+
+
+}
+else
+{
+    <div class="alert alert-danger" style="margin-top:25px">
+        <strong>Login Required</strong> You are not logged in. You must <a href="login">login</a> or <a href="register">register</a> an account
+    </div>
+}
+
+

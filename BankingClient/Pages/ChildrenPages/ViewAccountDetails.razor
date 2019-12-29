@@ -17,8 +17,17 @@
                     <p><span>isActive: @Account.isActive</span></p>
                     <br />
                     <p><span>Created: @Account.createdAt</span></p>
-                    <p><span>ChangedAt: @Account.changed.changedAt</span></p>
-                    <p><span>ChangedBy: @Account.changed.changedBy</span></p>
+                    @if (Account.changed != null)
+                    {
+                        <p><span>ChangedAt: @Account.changed.changedAt</span></p>
+                        <p><span>ChangedBy: @Account.changed.changedBy</span></p>
+                    }
+                    else
+                    {
+                        <p><span>ChangedAt: no entry</span></p>
+                        <p><span>ChangedBy: no entry</span></p>
+                    }
+
 
                 </div>
 
@@ -39,15 +48,15 @@
 
     // get Data from Parent
     [Parameter] public BankingAccount Account { get; set; }
-    
+
     // Action for sending Data from child to parent
     [Parameter] public Action<bool> ShowDetailAccountview{ get; set; }
-    
+
     // are called when Modal closed via button
     public void CloseModal()
     {
-        
-        ShowDetailAccountview(false);
+
+        ShowDetailAccountview.Invoke(false);
     }
 
 

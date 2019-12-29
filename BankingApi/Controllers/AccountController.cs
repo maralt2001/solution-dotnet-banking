@@ -171,6 +171,7 @@ namespace BankingApi.Controllers
             {
                 BankingAccount result = await _dBContext.LoadRecordAsync<BankingAccount>("Banking_Accounts",id);
                 return Ok(result);
+
             }
             catch (Exception)
             {
@@ -192,7 +193,7 @@ namespace BankingApi.Controllers
             catch (Exception)
             {
 
-                return StatusCode(500);
+                return NotFound();
             }
         }
         
@@ -233,7 +234,7 @@ namespace BankingApi.Controllers
             catch (Exception)
             {
 
-                return StatusCode(500);
+                return NotFound();
             }
         }
 

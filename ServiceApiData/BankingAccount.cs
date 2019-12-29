@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using MongoDB.Bson;
@@ -15,7 +16,9 @@ namespace ApiDataService
         [BsonRepresentation(BsonType.ObjectId)]
         [ReadOnly(true)]
         public string _id { get; set; }
+        [Required(ErrorMessage = "The Firstname is required")]
         public string firstname { get; set; }
+        [Required(ErrorMessage = "The Lastname is requiered")]
         public string lastname { get; set; }
         public Nullable<bool> isActive { get; set; } = null;
 

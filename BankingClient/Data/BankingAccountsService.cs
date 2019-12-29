@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using static HttpService.Content;
 using System;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
 
 namespace BankingClient.Data
 {
@@ -17,17 +18,21 @@ namespace BankingClient.Data
         private readonly CookieContainer _cookieContainer;
         private readonly string loginUrl;
         private readonly string getAllAccountsFromApi;
-        private readonly string getOneAccountRegexFromApi;
         private readonly string getAccountsRegexFromApi;
+        private readonly string postAccountToApi;
        
 
-        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration)
+        private readonly ILogger<BankingAccountsService> _logger;
+       
+
+        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger)
         {
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
             getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
-            getOneAccountRegexFromApi = configuration.GetSection("BankingApiGetOneAccountRegex").Value;
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
+            postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
+            _logger = logger;
             
         }
 
@@ -41,6 +46,7 @@ namespace BankingClient.Data
             if(_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
+                _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
                 responseMessage = await client.SendAsync(message);
             }
             else
@@ -71,6 +77,7 @@ namespace BankingClient.Data
                 };
                 // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
                 string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
+                _logger.LogInformation("Get Request to {0}", queryhelper);
 
                 using HttpClient client = new HttpClient();
 
@@ -115,6 +122,7 @@ namespace BankingClient.Data
 
                 // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
                 string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
+                _logger.LogInformation("Get Request to {0}", queryhelper);
 
                 using HttpClient client = new HttpClient();
 
@@ -144,6 +152,32 @@ namespace BankingClient.Data
             return result;
         }
 
+        public async Task<bool> SaveAccountAsync(BankingAccount bankingAccount)
+        {
+            HttpResponseMessage responseMessage;
+
+            using HttpClient client = new HttpClient();
+
+            if (_cookieContainer.Count > 0)
+            {
+                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Post, postAccountToApi), _cookieContainer, loginUrl);
+                message.Content = await GetSerializeStringContentAsync<BankingAccount>(bankingAccount);
+                _logger.LogInformation("Post Request to {0} ", postAccountToApi);
+                responseMessage = await client.SendAsync(message);
+            }
+            else
+            {
+                return false;
+            }
+
+            if(responseMessage.IsSuccessStatusCode)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {
 
@@ -162,5 +196,6 @@ namespace BankingClient.Data
             }
 
         }
+
     }
 }
