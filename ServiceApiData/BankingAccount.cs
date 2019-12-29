@@ -20,10 +20,10 @@ namespace ApiDataService
         public string firstname { get; set; }
         [Required(ErrorMessage = "The Lastname is requiered")]
         public string lastname { get; set; }
-        public Nullable<bool> isActive { get; set; } = null;
+        public bool? isActive { get; set; } = null;
 
         [BsonRepresentation(BsonType.DateTime)]
-        public Nullable<DateTime> createdAt { get; set; } = null;
+        public DateTime? createdAt { get; set; } = null;
 
         public AccountChanged changed { get; set; }
 
