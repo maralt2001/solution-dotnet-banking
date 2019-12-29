@@ -12,7 +12,7 @@ namespace BankingClient.Pages
     public class NewAccountBase : ComponentBase
     {
         #region Dependency Injection
-        [Inject] private BankingAccountsService _BankingAccountService { get; set; }
+        [Inject] private IBankingAccountsService _BankingAccountService { get; set; }
         [Inject] public UserState _UserState { get; set; }
         [Inject] NavigationManager Navigation { get; set; }
         #endregion

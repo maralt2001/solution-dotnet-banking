@@ -13,17 +13,17 @@ using Microsoft.Extensions.Logging;
 
 namespace BankingClient.Data
 {
-    public class BankingAccountsService
+    public class BankingAccountsService : IBankingAccountsService
     {
         private readonly CookieContainer _cookieContainer;
         private readonly string loginUrl;
         private readonly string getAllAccountsFromApi;
         private readonly string getAccountsRegexFromApi;
         private readonly string postAccountToApi;
-       
+
 
         private readonly ILogger<BankingAccountsService> _logger;
-       
+
 
         public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger)
         {
@@ -33,17 +33,17 @@ namespace BankingClient.Data
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
             _logger = logger;
-            
+
         }
 
         // Request api/banking/accounts/getall + set Authorization Cookie
         public async Task<BankingAccount[]> GetAccountsAsync()
         {
-            
+
             HttpResponseMessage responseMessage;
 
             using HttpClient client = new HttpClient();
-            if(_cookieContainer.Count > 0)
+            if (_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
@@ -53,12 +53,12 @@ namespace BankingClient.Data
             {
                 responseMessage = await client.GetAsync(getAllAccountsFromApi);
             }
-            
+
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonstring = await responseMessage.Content.ReadAsStringAsync();
                 return await GetDeserializeObjectAsync<BankingAccount[]>(jsonstring);
-                
+
             }
 
             return new BankingAccount[0];
@@ -66,7 +66,7 @@ namespace BankingClient.Data
 
         public Task<BankingAccount> GetOneAccountAsync(string field, string value)
         {
-            var result = Task.Run(async() => 
+            var result = Task.Run(async () =>
             {
                 HttpResponseMessage response;
 
@@ -105,7 +105,7 @@ namespace BankingClient.Data
             });
 
             return result;
-            
+
         }
 
         public Task<BankingAccount[]> GetAccountsRegexAsync(string field, string value)
@@ -170,7 +170,7 @@ namespace BankingClient.Data
                 return false;
             }
 
-            if(responseMessage.IsSuccessStatusCode)
+            if (responseMessage.IsSuccessStatusCode)
             {
                 return true;
             }

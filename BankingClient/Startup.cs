@@ -24,7 +24,7 @@ namespace BankingClient
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<BankingAccountsService>();
+            services.AddScoped<IBankingAccountsService,BankingAccountsService>();
             services.AddScoped<ApiUserService>();
             services.AddScoped<UserState>();
             services.AddScoped<BankingAccountStore>();
