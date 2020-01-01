@@ -18,8 +18,8 @@ namespace BankingClient.Pages
         #endregion
 
         [Parameter] public BankingAccount _BankingAccount { get; set; } = new BankingAccount();
-        [Parameter] public string _firstname { get; set; } = "";
-        [Parameter] public string _lastname { get; set; } = "";
+        [Parameter] public string _firstname { get; set; } = string.Empty;
+        [Parameter] public string _lastname { get; set; } = string.Empty;
         [Parameter] public bool _isActive { get; set; } = false;
 
         [Parameter] public bool _isAccountSaved { get; set; } = false;
@@ -31,15 +31,15 @@ namespace BankingClient.Pages
           if (saveresult)
           {
              _isAccountSaved = true;
-                _firstname = "";
-                _lastname = "";
+                _firstname = string.Empty;
+                _lastname = string.Empty;
                 StateHasChanged();
             }
           else
           {
             _isAccountSaved = false;
-                _firstname = "";
-                _lastname = "";
+                _firstname = string.Empty;
+                _lastname = string.Empty;
                 StateHasChanged();
             }
 

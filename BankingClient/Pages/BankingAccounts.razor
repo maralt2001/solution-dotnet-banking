@@ -1,6 +1,7 @@
 ﻿@page "/bankingaccounts"
 @using BankingClient.Pages.ChildrenPages
 
+
 @inherits BaseBankingAccounts
 
 
@@ -21,9 +22,9 @@
                     }
                 </select>
                 <div class="btn-group">
-                    <button class="btn btn-outline-success" @attributes="@_ButtonAttributes" disabled="@_GoButtonIsDisabled" @onclick="SearchAccount">Go</button>
-                    <button class="btn btn-outline-success" @attributes="@_ButtonAttributes" @onclick="@GetAllAccounts" disabled="@_GetAllButtonIsDisabled">All</button>
-                    <button class="btn btn-outline-danger" @attributes="@_ButtonAttributes" @onclick="@ResetTable" disabled="@_ResetButtonIsDisabled">Reset</button>
+                    <button class="btn btn-outline-success" @ref="GoButton" @attributes="@_ButtonAttributes" @onclick="SearchAccount">Go</button>
+                    <button class="btn btn-outline-success" @ref="AllButton" @attributes="@_ButtonAttributes" @onclick="@GetAllAccounts">All</button>
+                    <button class="btn btn-outline-danger"  @ref="ResetButton" @attributes="@_ButtonAttributes" @onclick="@ResetTable">Reset</button>
                     <button class="btn btn-outline-info" style="margin-left:10px; width:200px" @onclick="@GotoNewAccount">New Account</button>
                 </div>
                 
@@ -36,11 +37,11 @@
         
     </div>
     <p/>
-    <div class="container ml-1 col-9">
+    <div class="container ml-1 col-8">
         <table class="table table-hover">
-            <thead>
+            <thead class="thead-light">
                 <tr>
-                    <th>ID</th>
+                    <th>ID <span id="headerId" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("headerId"))" aria-hidden="true"></span></th>
                     <th>Firstname</th>
                     <th>Lastname</th>
                     <th>Active</th>

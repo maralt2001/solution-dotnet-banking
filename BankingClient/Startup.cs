@@ -7,6 +7,7 @@ using BankingClient.Data;
 using BankingClient.Provider;
 using System.Net;
 using ApiAccess;
+using Microsoft.JSInterop;
 
 namespace BankingClient
 {
@@ -31,6 +32,7 @@ namespace BankingClient
             services.AddScoped<CookieContainer>();
             services.AddScoped<ApplicationUser>();
             services.AddScoped<RegisterApplicationUser>();
+            
             
 
         }
