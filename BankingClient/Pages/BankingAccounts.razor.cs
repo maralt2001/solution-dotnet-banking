@@ -56,8 +56,6 @@ namespace BankingClient.Pages
             StateHasChanged();
         }
 
-        
-
         public void SetSelectedOption(ChangeEventArgs e)
         {
            _SelectedOption = e.Value.ToString();
@@ -119,7 +117,6 @@ namespace BankingClient.Pages
         }
 
         [JSInvokable]
-
         public async void OnSortClick(string id)
         {
             var result = Task.Run(() => 
@@ -145,9 +142,6 @@ namespace BankingClient.Pages
                     SortOption = "ascending";
                 }
 
-                
-
-
             });
 
             await result;
@@ -156,6 +150,7 @@ namespace BankingClient.Pages
             
         }
 
+        // Method to Render the Children EditAccount Page
         public void EditAccount(BankingAccount account)
         {
 
