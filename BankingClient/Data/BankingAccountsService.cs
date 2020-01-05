@@ -207,7 +207,7 @@ namespace BankingClient.Data
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Patch, queryhelper), _cookieContainer, loginUrl);
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(account);
-                _logger.LogInformation("Post Request to {0} ", updateAccountToApi);
+                _logger.LogInformation("Patch Request to {0} ", queryhelper);
                 responseMessage = await _httpClient.SendAsync(message);
 
             }

@@ -168,19 +168,16 @@ namespace BankingClient.Pages
         {
             if (updater.Item1 != true)
             {
-                _EditButtonClicked = false;
                 _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
-                StateHasChanged();
             }
             else
             {
                 // update Account in DB
-                var result = await _BankingAccountService.UpdateAccountAsync(updater.Item2);
+                await _BankingAccountService.UpdateAccountAsync(updater.Item2);
                 _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
-                _EditButtonClicked = false;
-                StateHasChanged();
-
             }
+            _EditButtonClicked = false;
+            StateHasChanged();
         }
 
         protected override async void OnInitialized()

@@ -19,7 +19,7 @@
             <input type="checkbox" id="isActive" @bind="@AccountToUpdate.isActive"/>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-success" @onclick="@UpdateAccount">Update</button>
+            <button type="submit" class="btn btn-success">Update</button>
             <button type="button" class="btn btn-danger" @onclick="@CancelUpdate">Cancel</button>
         </div>
         
@@ -48,9 +48,9 @@
 
     public void UpdateAccount()
     {
-        var x = OrginalAccount;
         isUpdated = true;
         updateManager(new Tuple<bool, BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
+        
     }
 
     public void CancelUpdate()
