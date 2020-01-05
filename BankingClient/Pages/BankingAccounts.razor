@@ -21,13 +21,14 @@
                         <option value="@item">@item</option>
                     }
                 </select>
-                <div class="btn-group">
-                    <button class="btn btn-outline-success" @ref="GoButton" @attributes="@_ButtonAttributes" @onclick="SearchAccount">Go</button>
-                    <button class="btn btn-outline-success" @ref="AllButton" @attributes="@_ButtonAttributes" @onclick="@GetAllAccounts">All</button>
-                    <button class="btn btn-outline-danger"  @ref="ResetButton" @attributes="@_ButtonAttributes" @onclick="@ResetTable">Reset</button>
-                    <button class="btn btn-outline-info" style="margin-left:10px; width:200px" @onclick="@GotoNewAccount">New Account</button>
+                <div class="input-group-append">
+                    <div class="btn-group">
+                        <button class="btn btn-outline-success" @ref="GoButton" @attributes="@_ButtonAttributes" @onclick="SearchAccount">Go</button>
+                        <button class="btn btn-outline-success" @ref="AllButton" @attributes="@_ButtonAttributes" @onclick="@GetAllAccounts">All</button>
+                        <button class="btn btn-outline-danger" @ref="ResetButton" @attributes="@_ButtonAttributes" @onclick="@ResetTable">Reset</button>
+                        <button class="btn btn-outline-info" style="margin-left:10px; width:200px" @onclick="@GotoNewAccount">New Account</button>
+                    </div>
                 </div>
-                
             </div>
         </div>
         <p/>
@@ -41,46 +42,61 @@
         <table class="table table-hover">
             <thead class="thead-light">
                 <tr>
-                    <th>ID <span id="headerId" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("headerId"))" aria-hidden="true"></span></th>
+                    <th>ID <span style="opacity:0.5" id="headerId" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("headerId"))" aria-hidden="true"></span></th>
                     <th>Firstname</th>
                     <th>Lastname</th>
                     <th>Active</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            @if(_BankingAccountStore.Blob.Length >0 && _BankingAccountStore.Blob.FirstOrDefault() != null)
+            @if (_BankingAccountStore.Blob.Length > 0 && _BankingAccountStore.Blob.FirstOrDefault() != null)
             {
-            <tbody>
-                
-                   @foreach(var account in _BankingAccountStore.Blob)
+                <tbody>
+
+                    @foreach (var account in _BankingAccountStore.Blob)
                     {
-                    <tr @onclick="@(a => ShowAccountDetails(account))">
-                      <td>@account._id</td>
-                      <td>@account.firstname</td>
-                      <td>@account.lastname</td>
-                      <td>@account.isActive</td>
-                    </tr>
+                        <tr>
+                            <td>@account._id</td>
+                            <td>@account.firstname</td>
+                            <td>@account.lastname</td>
+                            <td>@account.isActive</td>
+                            <td>
+                                <button class="btn btn-outline-primary" @onclick="@(a => EditAccount(account))">Edit</button>
+                                <button class="btn btn-outline-info" @onclick="@(a => ShowAccountDetails(account))">More</button>
+                            </td>
+                        </tr>
                     }
-                
-            </tbody>
+
+                </tbody>
             }
             else
             {
-                
+
             }
         </table>
+        @if(_EditButtonClicked == true)
+        {
+       
+            <EditAccount AccountToUpdate="@_UpdateAccount" updateManager="@ManagerEdit"></EditAccount>
+        
+        }
     </div>
-    if(_ShowDetails == true)
-    {
-      <ViewAccountDetails Account="@_Account" ShowDetailAccountview="@CloseAccountDetails"></ViewAccountDetails>
-    }
+        
+        if(_ShowDetails == true)
+        {
+        <ViewAccountDetails Account="@_Account" ShowDetailAccountview="@CloseAccountDetails"></ViewAccountDetails>
+        }
 
-}
-else
-{
-<div class="alert alert-danger" style="margin-top:25px">
-    <strong>Login Required</strong> You are not logged in. You must <a href="login">login</a> or <a href="register">register</a> an account
-</div>
-}
+        }
+        else
+        {
+        <div class="alert alert-danger" style="margin-top:25px">
+            <strong>Login Required</strong> You are not logged in. You must <a href="login">login</a> or <a href="register">register</a> an account
+        </div>
+        }
+
+                            
+
 
 
 

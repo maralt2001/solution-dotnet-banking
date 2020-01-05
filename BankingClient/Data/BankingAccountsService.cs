@@ -10,6 +10,7 @@ using static HttpService.Content;
 using System;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using BankingClient.Provider;
 
 namespace BankingClient.Data
 {
@@ -20,19 +21,22 @@ namespace BankingClient.Data
         private readonly string getAllAccountsFromApi;
         private readonly string getAccountsRegexFromApi;
         private readonly string postAccountToApi;
-
+        private readonly string updateAccountToApi;
 
         private readonly ILogger<BankingAccountsService> _logger;
+        private readonly UserState _userState;
 
 
-        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger)
+        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState)
         {
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
             getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
+            updateAccountToApi = configuration.GetSection("BankingApiUpdateAccount").Value;
             _logger = logger;
+            _userState = userState;
 
         }
 
@@ -177,6 +181,55 @@ namespace BankingClient.Data
 
             return false;
         }
+
+        public async Task<bool> UpdateAccountAsync(BankingAccount bankingAccount)
+        {
+            HttpResponseMessage responseMessage;
+
+            var query = new Dictionary<string, string>
+                {
+                    { "id", bankingAccount._id }
+                   
+                };
+            string queryhelper = QueryHelpers.AddQueryString(updateAccountToApi, query).Replace("\"", string.Empty);
+
+            var account = new BankingAccount
+            {
+                firstname = bankingAccount.firstname,
+                lastname = bankingAccount.lastname,
+                isActive = bankingAccount.isActive
+                
+                
+            };
+
+            account.AddChanged(DateTime.Now, _userState.Username);
+
+
+            using HttpClient client = new HttpClient();
+
+            if (_cookieContainer.Count > 0)
+            {
+                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Patch, queryhelper), _cookieContainer, loginUrl);
+                message.Content = await GetSerializeStringContentAsync<BankingAccount>(account);
+                _logger.LogInformation("Post Request to {0} ", updateAccountToApi);
+                responseMessage = await client.SendAsync(message);
+
+            }
+            else
+            {
+                return false;
+            }
+            if(responseMessage.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
 
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {

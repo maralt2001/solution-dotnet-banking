@@ -18,7 +18,7 @@ namespace MongoService
             try
             {
                 IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
-                await collection.InsertOneAsync(record);
+                await collection.InsertOneAsync(record).ConfigureAwait(false);
                 return true;
             }
             catch (Exception)
@@ -31,7 +31,7 @@ namespace MongoService
         public async Task<List<T>> LoadRecordsAsync<T>(string collectionName)
         {
             IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
-            return await collection.FindAsync(new BsonDocument()).Result.ToListAsync();
+            return await collection.FindAsync(new BsonDocument()).Result.ToListAsync().ConfigureAwait(false);
 
         }
 
@@ -43,7 +43,7 @@ namespace MongoService
             try
             {
                 IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
-                var result = await collection.UpdateOneAsync(filter, bson);
+                var result = await collection.UpdateOneAsync(filter, bson).ConfigureAwait(false);
                 return true;
 
             }
@@ -61,7 +61,7 @@ namespace MongoService
 
                 IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
                 FilterDefinition<T> filter = Builders<T>.Filter.Eq("_id", id);
-                return await collection.FindAsync(filter).Result.FirstOrDefaultAsync();
+                return await collection.FindAsync(filter).Result.FirstOrDefaultAsync().ConfigureAwait(false);
 
             }
             catch (Exception)
@@ -77,7 +77,7 @@ namespace MongoService
             {
                 IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
                 var filter = Builders<T>.Filter.Eq("_id", id);
-                var result = await collection.DeleteOneAsync(filter);
+                var result = await collection.DeleteOneAsync(filter).ConfigureAwait(false);
                 if (result.DeletedCount > 0)
                 {
                     return true;
@@ -98,7 +98,7 @@ namespace MongoService
         {
             IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
 
-            return await collection.Find(new BsonDocument()).Skip(skip).Limit(limit).ToListAsync();
+            return await collection.Find(new BsonDocument()).Skip(skip).Limit(limit).ToListAsync().ConfigureAwait(false);
 
         }
 
@@ -106,14 +106,14 @@ namespace MongoService
         {
             IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
             var filter = Builders<T>.Filter.Regex(field, new BsonRegularExpression($"{regexvalue}", "i"));
-            return await collection.FindAsync(filter).Result.FirstOrDefaultAsync();
+            return await collection.FindAsync(filter).Result.FirstOrDefaultAsync().ConfigureAwait(false);
         }
 
         public async Task<List<T>> LoadRecordsRegexAsync<T>(string collectionName, string field, string regexvalue)
         {
             IMongoCollection<T> collection = Database.GetCollection<T>(collectionName);
             var filter = Builders<T>.Filter.Regex(field, new BsonRegularExpression($"{regexvalue}", "i"));
-            return await collection.Find(filter).ToListAsync();
+            return await collection.Find(filter).ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> IsConnectionUp (int secondToWait = 1)
@@ -130,7 +130,7 @@ namespace MongoService
                         return Database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Wait(secondToWait * 1000);
                     });
 
-                return await result;
+                return await result.ConfigureAwait(false);
                
             }
                 

@@ -32,8 +32,6 @@ namespace BankingClient
             services.AddScoped<CookieContainer>();
             services.AddScoped<ApplicationUser>();
             services.AddScoped<RegisterApplicationUser>();
-            
-            
 
         }
 

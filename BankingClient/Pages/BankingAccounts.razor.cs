@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using System.Linq;
+using System;
 
 namespace BankingClient.Pages
 {
@@ -40,6 +41,9 @@ namespace BankingClient.Pages
         };
 
         [Parameter] public string SortOption { get; set; } = "ascending";
+
+        [Parameter] public bool _EditButtonClicked { get; set; } = false;
+        [Parameter] public BankingAccount _UpdateAccount { get; set; }
         #endregion
 
 
@@ -122,13 +126,21 @@ namespace BankingClient.Pages
             {
                 if(SortOption == "ascending")
                 {
-                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>().ToList().OrderByDescending(o => o._id).ToList<BankingAccount>().ToArray();
+                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>()
+                    .ToList()
+                    .OrderByDescending(o => o._id)
+                    .ToList<BankingAccount>()
+                    .ToArray();
                     _BankingAccountStore.Blob = sortItems;
                     SortOption = "descending";
                 }
                 else
                 {
-                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>().ToList().OrderBy(o => o._id).ToList<BankingAccount>().ToArray();
+                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>()
+                    .ToList()
+                    .OrderBy(o => o._id)
+                    .ToList<BankingAccount>()
+                    .ToArray();
                     _BankingAccountStore.Blob = sortItems;
                     SortOption = "ascending";
                 }
@@ -142,6 +154,33 @@ namespace BankingClient.Pages
             await _JSRuntime.InvokeVoidAsync("onSortClick", id);
             StateHasChanged();
             
+        }
+
+        public void EditAccount(BankingAccount account)
+        {
+
+            _EditButtonClicked = true;
+            _UpdateAccount = account;
+
+        }
+
+        public async void ManagerEdit(Tuple<bool, BankingAccount, BankingAccount> updater)
+        {
+            if (updater.Item1 != true)
+            {
+                _EditButtonClicked = false;
+                _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
+                StateHasChanged();
+            }
+            else
+            {
+                // update Account in DB
+                var result = await _BankingAccountService.UpdateAccountAsync(updater.Item2);
+                _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
+                _EditButtonClicked = false;
+                StateHasChanged();
+
+            }
         }
 
         protected override async void OnInitialized()

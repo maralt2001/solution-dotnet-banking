@@ -1,0 +1,83 @@
+﻿@using ApiDataService 
+
+
+<div class="input-group">
+    <EditForm Model="@_BankingAccount" OnValidSubmit="@UpdateAccount">
+        <div class="form-group">
+            <label class="form-text">Edit Account: @AccountToUpdate._id</label>
+        </div>
+        <div class="form-group">
+            <label for="firstname">Firstname:</label>
+            <input class="form-control" type="text" id="firstname" @bind-value="@AccountToUpdate.firstname"/>
+        </div>
+        <div class="form-group">
+            <label for="lastname">Lastname:</label>
+            <input class="form-control" id="lastname" type="text" @bind-value="@AccountToUpdate.lastname"/>
+        </div>
+        <div class="form-group">
+            <label class="form-check-label" for="isActive">Active:</label>
+            <input type="checkbox" id="isActive" @bind="@AccountToUpdate.isActive"/>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success" @onclick="@UpdateAccount">Update</button>
+            <button type="button" class="btn btn-danger" @onclick="@CancelUpdate">Cancel</button>
+        </div>
+        
+    </EditForm>
+    
+
+
+</div>
+
+
+
+@code {
+
+    [Parameter] public BankingAccount _BankingAccount { get; set; } = new BankingAccount();
+
+    protected BankingAccount OrginalAccount = new BankingAccount();
+
+    [Parameter] public BankingAccount AccountToUpdate { get; set; }
+
+    [Parameter] public bool isUpdated { get; set; } = false;
+
+
+    [Parameter] public Action<Tuple<bool,BankingAccount,BankingAccount>> updateManager { get; set; }
+
+
+
+    public void UpdateAccount()
+    {
+        var x = OrginalAccount;
+        isUpdated = true;
+        updateManager(new Tuple<bool, BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
+    }
+
+    public void CancelUpdate()
+    {
+        isUpdated = false;
+        updateManager(new Tuple<bool,BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
+        
+    }
+
+
+    protected override async void OnInitialized()
+    {
+        var result = Task.Run(() =>
+        {
+            OrginalAccount._id = AccountToUpdate._id;
+            OrginalAccount.firstname = AccountToUpdate.firstname;
+            OrginalAccount.lastname = AccountToUpdate.lastname;
+            OrginalAccount.isActive = AccountToUpdate.isActive;
+            OrginalAccount.createdAt = AccountToUpdate.createdAt;
+            OrginalAccount.changed = AccountToUpdate.changed;
+            
+
+        });
+        await result;
+
+    }
+
+
+
+}

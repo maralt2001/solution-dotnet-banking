@@ -11,5 +11,6 @@ namespace BankingClient.Data
         Task<BankingAccount[]> GetAccountsRegexAsync(string field, string value);
         Task<BankingAccount> GetOneAccountAsync(string field, string value);
         Task<bool> SaveAccountAsync(BankingAccount bankingAccount);
+        Task<bool> UpdateAccountAsync(BankingAccount bankingAccount);
     }
 }

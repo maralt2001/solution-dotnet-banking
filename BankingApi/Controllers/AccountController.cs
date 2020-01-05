@@ -82,7 +82,7 @@ namespace BankingApi.Controllers
         [Produces("application/json")]
         public async Task<IActionResult> UpdateBankingAccount([FromQuery]string id,[FromBody] BankingAccount bankingAccount)
         {
-            bankingAccount.AddChanged(DateTime.Now, "administrator");
+            //bankingAccount.AddChanged(DateTime.Now, "administrator");
             
             try
             {
