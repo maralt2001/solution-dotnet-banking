@@ -80,6 +80,7 @@ namespace BankingApi.Controllers
         [HttpPatch]
         [Route("api/banking/account/update")]
         [Produces("application/json")]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<IActionResult> UpdateBankingAccount([FromQuery]string id,[FromBody] BankingAccount bankingAccount)
         {
             //bankingAccount.AddChanged(DateTime.Now, "administrator");

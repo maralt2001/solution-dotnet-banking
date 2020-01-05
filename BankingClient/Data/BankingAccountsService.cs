@@ -24,10 +24,11 @@ namespace BankingClient.Data
         private readonly string updateAccountToApi;
 
         private readonly ILogger<BankingAccountsService> _logger;
+        private readonly HttpClient _httpClient;
         private readonly UserState _userState;
 
 
-        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState)
+        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState, HttpClient httpClient)
         {
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
@@ -36,6 +37,7 @@ namespace BankingClient.Data
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
             updateAccountToApi = configuration.GetSection("BankingApiUpdateAccount").Value;
             _logger = logger;
+            _httpClient = httpClient;
             _userState = userState;
 
         }
@@ -45,17 +47,16 @@ namespace BankingClient.Data
         {
 
             HttpResponseMessage responseMessage;
-
-            using HttpClient client = new HttpClient();
+            
             if (_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
-                responseMessage = await client.SendAsync(message);
+                responseMessage = await _httpClient.SendAsync(message);
             }
             else
             {
-                responseMessage = await client.GetAsync(getAllAccountsFromApi);
+                responseMessage = await _httpClient.GetAsync(getAllAccountsFromApi);
             }
 
             if (responseMessage.IsSuccessStatusCode)
@@ -83,16 +84,14 @@ namespace BankingClient.Data
                 string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
                 _logger.LogInformation("Get Request to {0}", queryhelper);
 
-                using HttpClient client = new HttpClient();
-
                 if (_cookieContainer.Count > 0)
                 {
                     HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
-                    response = await client.SendAsync(message);
+                    response = await _httpClient.SendAsync(message);
                 }
                 else
                 {
-                    response = await client.GetAsync(queryhelper);
+                    response = await _httpClient.GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -128,16 +127,16 @@ namespace BankingClient.Data
                 string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
                 _logger.LogInformation("Get Request to {0}", queryhelper);
 
-                using HttpClient client = new HttpClient();
+                
 
                 if (_cookieContainer.Count > 0)
                 {
                     HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
-                    response = await client.SendAsync(message);
+                    response = await _httpClient.SendAsync(message);
                 }
                 else
                 {
-                    response = await client.GetAsync(queryhelper);
+                    response = await _httpClient.GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -160,14 +159,14 @@ namespace BankingClient.Data
         {
             HttpResponseMessage responseMessage;
 
-            using HttpClient client = new HttpClient();
+            
 
             if (_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Post, postAccountToApi), _cookieContainer, loginUrl);
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(bankingAccount);
                 _logger.LogInformation("Post Request to {0} ", postAccountToApi);
-                responseMessage = await client.SendAsync(message);
+                responseMessage = await _httpClient.SendAsync(message);
             }
             else
             {
@@ -204,15 +203,12 @@ namespace BankingClient.Data
 
             account.AddChanged(DateTime.Now, _userState.Username);
 
-
-            using HttpClient client = new HttpClient();
-
             if (_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Patch, queryhelper), _cookieContainer, loginUrl);
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(account);
                 _logger.LogInformation("Post Request to {0} ", updateAccountToApi);
-                responseMessage = await client.SendAsync(message);
+                responseMessage = await _httpClient.SendAsync(message);
 
             }
             else
@@ -230,12 +226,10 @@ namespace BankingClient.Data
 
         }
 
-
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {
-
-            using HttpClient client = new HttpClient();
-            var response = await client.GetAsync(getAllAccountsFromApi);
+            
+            var response = await _httpClient.GetAsync(getAllAccountsFromApi);
             if (response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();
