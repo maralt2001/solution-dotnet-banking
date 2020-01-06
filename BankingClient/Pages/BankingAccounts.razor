@@ -42,10 +42,10 @@
         <table class="table table-hover">
             <thead class="thead-light">
                 <tr>
-                    <th>ID <span style="opacity:0.5" id="headerId" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("headerId"))" aria-hidden="true"></span></th>
-                    <th>Firstname</th>
-                    <th>Lastname</th>
-                    <th>Active</th>
+                    <th>ID <span style="opacity:0.5" id="headerId" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("_id","headerId"))" aria-hidden="true"></span></th>
+                    <th>Firstname <span style="opacity:0.5" id="headerFirstname" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("firstname","headerFirstname"))" aria-hidden="true"></span></th>
+                    <th>Lastname <span style="opacity:0.5" id="headerLastname" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("lastname","headerLastname"))" aria-hidden="true"></span></th>
+                    <th>Active  <span style="opacity:0.5" id="headerActive" class="oi oi-sort-ascending" @onclick="@((args) => OnSortClick("isActive","headerActive"))" aria-hidden="true"></span></th>
                     <th>Action</th>
                 </tr>
             </thead>

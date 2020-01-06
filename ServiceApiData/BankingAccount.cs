@@ -65,6 +65,11 @@ namespace ApiDataService
             
         }
 
+        public PatchBankingAccount AsPatchBankingAccount()
+        {
+            return (PatchBankingAccount)this;
+        }
+
     }
 
     public class AccountChanged
@@ -80,5 +85,17 @@ namespace ApiDataService
             changedBy = this.changedBy;
         }
         
+    }
+
+    public class PatchBankingAccount : BankingAccount
+    {
+        public PatchBankingAccount(BankingAccount bankingAccount, DateTime dateTime, string changedBy)
+        {
+            firstname = bankingAccount.firstname;
+            lastname = bankingAccount.lastname;
+            isActive = bankingAccount.isActive;
+
+            changed = new AccountChanged { changedAt = dateTime, changedBy = changedBy };
+        }
     }
 }

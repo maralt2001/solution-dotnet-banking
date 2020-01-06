@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using BankingClient.Provider;
 
+
 namespace BankingClient.Data
 {
     public class BankingAccountsService : IBankingAccountsService
@@ -24,11 +25,11 @@ namespace BankingClient.Data
         private readonly string updateAccountToApi;
 
         private readonly ILogger<BankingAccountsService> _logger;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly UserState _userState;
 
 
-        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState, HttpClient httpClient)
+        public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState, IHttpClientFactory clientFactory)
         {
             _cookieContainer = cookieContainer;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
@@ -37,7 +38,7 @@ namespace BankingClient.Data
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
             updateAccountToApi = configuration.GetSection("BankingApiUpdateAccount").Value;
             _logger = logger;
-            _httpClient = httpClient;
+            _clientFactory = clientFactory;
             _userState = userState;
 
         }
@@ -52,11 +53,11 @@ namespace BankingClient.Data
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
-                responseMessage = await _httpClient.SendAsync(message);
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
             else
             {
-                responseMessage = await _httpClient.GetAsync(getAllAccountsFromApi);
+                responseMessage = await _clientFactory.CreateClient().GetAsync(getAllAccountsFromApi);
             }
 
             if (responseMessage.IsSuccessStatusCode)
@@ -87,11 +88,11 @@ namespace BankingClient.Data
                 if (_cookieContainer.Count > 0)
                 {
                     HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
-                    response = await _httpClient.SendAsync(message);
+                    response = await _clientFactory.CreateClient().SendAsync(message);
                 }
                 else
                 {
-                    response = await _httpClient.GetAsync(queryhelper);
+                    response = await _clientFactory.CreateClient().GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -132,11 +133,11 @@ namespace BankingClient.Data
                 if (_cookieContainer.Count > 0)
                 {
                     HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
-                    response = await _httpClient.SendAsync(message);
+                    response = await _clientFactory.CreateClient().SendAsync(message);
                 }
                 else
                 {
-                    response = await _httpClient.GetAsync(queryhelper);
+                    response = await _clientFactory.CreateClient().GetAsync(queryhelper);
                 }
 
                 if (response.IsSuccessStatusCode)
@@ -159,14 +160,12 @@ namespace BankingClient.Data
         {
             HttpResponseMessage responseMessage;
 
-            
-
             if (_cookieContainer.Count > 0)
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Post, postAccountToApi), _cookieContainer, loginUrl);
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(bankingAccount);
                 _logger.LogInformation("Post Request to {0} ", postAccountToApi);
-                responseMessage = await _httpClient.SendAsync(message);
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
             else
             {
@@ -192,29 +191,23 @@ namespace BankingClient.Data
                 };
             string queryhelper = QueryHelpers.AddQueryString(updateAccountToApi, query).Replace("\"", string.Empty);
 
-            var account = new BankingAccount
-            {
-                firstname = bankingAccount.firstname,
-                lastname = bankingAccount.lastname,
-                isActive = bankingAccount.isActive
-                
-                
-            };
-
-            account.AddChanged(DateTime.Now, _userState.Username);
-
-            if (_cookieContainer.Count > 0)
+            if (_cookieContainer.Count > 0) //Request with Cookies
             {
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Patch, queryhelper), _cookieContainer, loginUrl);
-                message.Content = await GetSerializeStringContentAsync<BankingAccount>(account);
+                message.Content = await GetSerializeStringContentAsync<PatchBankingAccount>(new PatchBankingAccount(bankingAccount, DateTime.Now, _userState.Username));
                 _logger.LogInformation("Patch Request to {0} ", queryhelper);
-                responseMessage = await _httpClient.SendAsync(message);
-
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
-            else
+            else // Request without Cookies
             {
-                return false;
+                HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Patch, queryhelper)
+                {
+                    Content = await GetSerializeStringContentAsync<PatchBankingAccount>(new PatchBankingAccount(bankingAccount, DateTime.Now, _userState.Username))
+                };
+                _logger.LogInformation("Patch Request to {0} ", queryhelper);
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
+
             if(responseMessage.IsSuccessStatusCode)
             {
                 return true;
@@ -229,7 +222,7 @@ namespace BankingClient.Data
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {
             
-            var response = await _httpClient.GetAsync(getAllAccountsFromApi);
+            var response = await _clientFactory.CreateClient().GetAsync(getAllAccountsFromApi);
             if (response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();

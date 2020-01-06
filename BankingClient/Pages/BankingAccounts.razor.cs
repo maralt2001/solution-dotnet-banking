@@ -116,36 +116,28 @@ namespace BankingClient.Pages
             Navigation.NavigateTo("NewAccount");
         }
 
+        // Method handle the Sort Table action
         [JSInvokable]
-        public async void OnSortClick(string id)
+        public async void OnSortClick(string key, string elementId)
         {
-            var result = Task.Run(() => 
+            await Task.Run(() =>
             {
                 if(SortOption == "ascending")
                 {
-                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>()
-                    .ToList()
-                    .OrderByDescending(o => o._id)
-                    .ToList<BankingAccount>()
-                    .ToArray();
+                    BankingAccount[] sortItems = _BankingAccountStore.SortDescending(key);
                     _BankingAccountStore.Blob = sortItems;
                     SortOption = "descending";
                 }
                 else
                 {
-                    var sortItems = _BankingAccountStore.Blob.AsEnumerable<BankingAccount>()
-                    .ToList()
-                    .OrderBy(o => o._id)
-                    .ToList<BankingAccount>()
-                    .ToArray();
+                    BankingAccount[] sortItems = _BankingAccountStore.SortAscending(key);
                     _BankingAccountStore.Blob = sortItems;
                     SortOption = "ascending";
                 }
 
             });
-
-            await result;
-            await _JSRuntime.InvokeVoidAsync("onSortClick", id);
+            
+            await _JSRuntime.InvokeVoidAsync("onSortClick", elementId);
             StateHasChanged();
             
         }

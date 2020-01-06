@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Dynamic;
 
 namespace HttpService
 {
@@ -19,7 +21,6 @@ namespace HttpService
         // Serialize an Object to StringContent
         public static Task<StringContent> GetSerializeStringContentAsync<T>(T DataObject)
         {
-
             Task<StringContent> result = Task.Run(() =>
             {
                 var json = JsonConvert.SerializeObject(DataObject);
