@@ -167,6 +167,21 @@ namespace BankingClient.Pages
             StateHasChanged();
         }
 
+        public async void ManagerDelete(Tuple<bool, BankingAccount> deleter)
+        {
+            if(deleter.Item1)
+            {
+                await _BankingAccountService.DeleteAccount(deleter.Item2._id);
+                _BankingAccountStore.Blob = await _BankingAccountService.GetAccountsAsync();
+            }
+            else
+            {
+                return;
+            }
+            _EditButtonClicked = false;
+            StateHasChanged();
+        }
+
         protected override async void OnInitialized()
         {
             var result = Task.Run(() => 

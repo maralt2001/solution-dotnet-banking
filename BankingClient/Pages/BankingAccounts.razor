@@ -9,7 +9,7 @@
 
 @if (_UserState.IsLoggedIn == true)
 {
-    <div class="container ml-1 col-6"> 
+    <div class="container ml-1 col-6">
         <h2>Banking Accounts Workbook</h2>
         <br />
         <div class="input-group">
@@ -31,13 +31,13 @@
                 </div>
             </div>
         </div>
-        <p/>
+        <p />
         <div class="custom-control-inline">
             <TableEntryCount TableCount="@_BankingAccountStore.Blob.Length"></TableEntryCount>
         </div>
-        
+
     </div>
-    <p/>
+    <p />
     <div class="container ml-1 col-8">
         <table class="table table-hover">
             <thead class="thead-light">
@@ -74,28 +74,30 @@
 
             }
         </table>
-        @if(_EditButtonClicked == true)
-        {
        
-            <EditAccount AccountToUpdate="@_UpdateAccount" updateManager="@ManagerEdit"></EditAccount>
-        
-        }
     </div>
-        
-        if(_ShowDetails == true)
-        {
-        <ViewAccountDetails Account="@_Account" ShowDetailAccountview="@CloseAccountDetails"></ViewAccountDetails>
-        }
+    if (_EditButtonClicked == true)
+    {
+        <div class="container border ml-1 col-3" style="background-color:lightsteelblue">
+            <EditAccount AccountToUpdate="@_UpdateAccount" updateManager="@ManagerEdit" deleteManager="@ManagerDelete"></EditAccount>
+        </div>
+    }
 
-        }
-        else
-        {
+
+    if (_ShowDetails == true)
+    {
+        <ViewAccountDetails Account="@_Account" ShowDetailAccountview="@CloseAccountDetails"></ViewAccountDetails>
+    }
+
+}
+    else
+    {
         <div class="alert alert-danger" style="margin-top:25px">
             <strong>Login Required</strong> You are not logged in. You must <a href="login">login</a> or <a href="register">register</a> an account
         </div>
-        }
+    }
 
-                            
+
 
 
 

@@ -23,6 +23,7 @@ namespace BankingClient.Data
         private readonly string getAccountsRegexFromApi;
         private readonly string postAccountToApi;
         private readonly string updateAccountToApi;
+        private readonly string deleteAccountToApi;
 
         private readonly ILogger<BankingAccountsService> _logger;
         private readonly IHttpClientFactory _clientFactory;
@@ -37,6 +38,7 @@ namespace BankingClient.Data
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
             updateAccountToApi = configuration.GetSection("BankingApiUpdateAccount").Value;
+            deleteAccountToApi = configuration.GetSection("BankingApiDeleteAccount").Value;
             _logger = logger;
             _clientFactory = clientFactory;
             _userState = userState;
@@ -51,6 +53,7 @@ namespace BankingClient.Data
             
             if (_cookieContainer.Count > 0)
             {
+
                 HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
                 _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
@@ -217,6 +220,39 @@ namespace BankingClient.Data
                 return false;
             }
 
+        }
+
+        public async Task<bool> DeleteAccount(string id)
+        {
+            HttpResponseMessage responseMessage;
+
+            var query = new Dictionary<string, string>
+            {
+                {"id", id }
+            };
+
+            string queryhelper = QueryHelpers.AddQueryString(deleteAccountToApi, query).Replace("\"", string.Empty);
+
+            if(_cookieContainer.Count > 0)
+            {
+                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Delete, queryhelper), _cookieContainer, loginUrl);
+                _logger.LogInformation("Delete Request to {0} ", queryhelper);
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
+            }
+            else
+            {
+                HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Delete, queryhelper);
+                responseMessage = await _clientFactory.CreateClient().SendAsync(message);
+            }
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()

@@ -1,33 +1,44 @@
 ﻿@using ApiDataService 
 
 
-<div class="input-group">
-    <EditForm Model="@_BankingAccount" OnValidSubmit="@UpdateAccount">
-        <div class="form-group">
-            <label class="form-text">Edit Account: @AccountToUpdate._id</label>
-        </div>
-        <div class="form-group">
-            <label for="firstname">Firstname:</label>
-            <input class="form-control" type="text" id="firstname" @bind-value="@AccountToUpdate.firstname"/>
-        </div>
-        <div class="form-group">
-            <label for="lastname">Lastname:</label>
-            <input class="form-control" id="lastname" type="text" @bind-value="@AccountToUpdate.lastname"/>
-        </div>
-        <div class="form-group">
-            <label class="form-check-label" for="isActive">Active:</label>
-            <input type="checkbox" id="isActive" @bind="@AccountToUpdate.isActive"/>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">Update</button>
-            <button type="button" class="btn btn-danger" @onclick="@CancelUpdate">Cancel</button>
-        </div>
-        
-    </EditForm>
-    
+    <div class="modal fade show modal-dialog-centered" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Account</h4>
+                    <button type="button" class="close" data-dismiss="modal" @onclick="@CancelUpdate">&times;</button>
+                </div>
+                <div class="modal-body">
 
-
-</div>
+                    <div class="input-group">
+                        <EditForm Model="@_BankingAccount" OnValidSubmit="@UpdateAccount">
+                            <div class="form-group">
+                                <label class="form-text">id: @AccountToUpdate._id</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="firstname">Firstname:</label>
+                                <input class="form-control" type="text" id="firstname" @bind-value="@AccountToUpdate.firstname" />
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Lastname:</label>
+                                <input class="form-control" id="lastname" type="text" @bind-value="@AccountToUpdate.lastname" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-check-label" for="isActive">Active:</label>
+                                <input type="checkbox" id="isActive" @bind="@AccountToUpdate.isActive" />
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success">Update</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@CancelUpdate">Cancel</button>
+                                <button type="button" class="btn btn-danger ml-4" @onclick="@DeleteAccount">Delete</button>
+                            </div>
+                        </EditForm>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <div class="modal-backdrop fade show"></div>
 
 
 
@@ -42,7 +53,8 @@
     [Parameter] public bool isUpdated { get; set; } = false;
 
 
-    [Parameter] public Action<Tuple<bool,BankingAccount,BankingAccount>> updateManager { get; set; }
+    [Parameter] public Action<Tuple<bool, BankingAccount, BankingAccount>> updateManager { get; set; }
+    [Parameter] public Action<Tuple<bool, BankingAccount>> deleteManager { get; set; }
 
 
 
@@ -50,14 +62,20 @@
     {
         isUpdated = true;
         updateManager(new Tuple<bool, BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
-        
+
+    }
+
+    public void DeleteAccount()
+    {
+        isUpdated = false;
+        deleteManager(new Tuple<bool, BankingAccount>(true, OrginalAccount));
     }
 
     public void CancelUpdate()
     {
         isUpdated = false;
-        updateManager(new Tuple<bool,BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
-        
+        updateManager(new Tuple<bool, BankingAccount, BankingAccount>(isUpdated, AccountToUpdate, OrginalAccount));
+
     }
 
 
@@ -71,7 +89,7 @@
             OrginalAccount.isActive = AccountToUpdate.isActive;
             OrginalAccount.createdAt = AccountToUpdate.createdAt;
             OrginalAccount.changed = AccountToUpdate.changed;
-            
+
 
         });
         await result;

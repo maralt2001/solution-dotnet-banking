@@ -17,9 +17,12 @@ namespace BankingClient.Data
         private readonly string logoutUrl;
         private readonly string registerUrl;
 
-        public ApiUserService(CookieContainer cookieContainer, IConfiguration configuration)
+        private readonly IHttpClientFactory _clientFactory;
+
+        public ApiUserService(CookieContainer cookieContainer, IConfiguration configuration, IHttpClientFactory clientFactory)
         {
             _cookieContainer = cookieContainer;
+            _clientFactory = clientFactory;
             loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
             logoutUrl = configuration.GetSection("BankingApiLogoutPath").Value;
             registerUrl = configuration.GetSection("BankingApiRegisterPath").Value;
@@ -33,8 +36,8 @@ namespace BankingClient.Data
             StringContent content = await GetSerializeStringContentAsync(applicationUser);
             Uri uri = new Uri(loginUrl);
 
-            using HttpClient client = new HttpClient();
-            var response = await client.PostAsync(loginUrl, content);
+            
+            var response = await _clientFactory.CreateClient().PostAsync(loginUrl, content);
 
             var cookies = await GetCookiesAsync(response);
 
@@ -69,7 +72,7 @@ namespace BankingClient.Data
             }
             else
             {
-                responseMessage = await client.GetAsync(logoutUrl);
+                responseMessage = await _clientFactory.CreateClient().GetAsync(logoutUrl);
             }
 
             if (responseMessage.IsSuccessStatusCode)
@@ -97,9 +100,9 @@ namespace BankingClient.Data
             StringContent content = await GetSerializeStringContentAsync(applicationUser);
             Uri uri = new Uri(registerUrl);
 
-            using HttpClient client = new HttpClient();
+            
 
-            var response = await client.PostAsync(uri, content);
+            var response = await _clientFactory.CreateClient().PostAsync(uri, content);
             if(response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();
