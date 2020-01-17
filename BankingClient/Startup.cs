@@ -7,6 +7,7 @@ using BankingClient.Data;
 using BankingClient.Provider;
 using System.Net;
 using ApiAccess;
+using ServiceHttp;
 using Microsoft.JSInterop;
 using System.Net.Http;
 

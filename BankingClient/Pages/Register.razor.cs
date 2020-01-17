@@ -12,6 +12,7 @@ namespace BankingClient.Pages
         [Inject] ApiUserService UserService { get; set; }
         [Inject] public ApplicationUser ApplicationUser { get; set; }
         [Inject] public RegisterApplicationUser RegisterApplicationUser { get; set; }
+        [Inject] NavigationManager Navigation { get; set; }
 
         [Parameter] public bool Init { get; set; } = true;
         [Parameter] public bool RegisterResult { get; set; }
@@ -51,6 +52,10 @@ namespace BankingClient.Pages
                     ConfirmPassword = "";
                 }
 
+                if(RegisterResult == true)
+                {
+                    Navigation.NavigateTo("login");
+                }
 
                 StateHasChanged();
 

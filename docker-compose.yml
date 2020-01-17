@@ -49,6 +49,7 @@ services:
      - BankingApiGetAccountsRegex=http://banking-api/api/banking/accounts/getaccountsregex
      - BankingApiPostAccount=http://banking-api/api/banking/account/create
      - BankingApiUpdateAccount=http://banking-api/api/banking/account/update
+     - BankingApiDeleteAccount=http://banking-api/api/banking/account/delete
     depends_on: 
       - bankingapi
 

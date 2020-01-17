@@ -11,14 +11,15 @@ using System;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using BankingClient.Provider;
-
+using ServiceHttp;
 
 namespace BankingClient.Data
 {
     public class BankingAccountsService : IBankingAccountsService
     {
         private readonly CookieContainer _cookieContainer;
-        private readonly string loginUrl;
+        private readonly string backEndUri;
+        private readonly string relLoginUri;
         private readonly string getAllAccountsFromApi;
         private readonly string getAccountsRegexFromApi;
         private readonly string postAccountToApi;
@@ -33,7 +34,9 @@ namespace BankingClient.Data
         public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState, IHttpClientFactory clientFactory)
         {
             _cookieContainer = cookieContainer;
-            loginUrl = configuration.GetSection("BankingApiLoginPath").Value;
+            backEndUri = configuration.GetSection("BackEndUri").Value;
+            relLoginUri = configuration.GetSection("RelLoginUri").Value;
+            
             getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
             getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
             postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
@@ -53,8 +56,7 @@ namespace BankingClient.Data
             
             if (_cookieContainer.Count > 0)
             {
-
-                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, getAllAccountsFromApi), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Get, getAllAccountsFromApi, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                 _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
@@ -65,12 +67,14 @@ namespace BankingClient.Data
 
             if (responseMessage.IsSuccessStatusCode)
             {
+                
                 var jsonstring = await responseMessage.Content.ReadAsStringAsync();
                 return await GetDeserializeObjectAsync<BankingAccount[]>(jsonstring);
 
             }
 
-            return new BankingAccount[0];
+            
+            return Array.Empty<BankingAccount>();
         }
 
         public Task<BankingAccount> GetOneAccountAsync(string field, string value)
@@ -90,7 +94,7 @@ namespace BankingClient.Data
 
                 if (_cookieContainer.Count > 0)
                 {
-                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
+                    HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Get, queryhelper, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                     response = await _clientFactory.CreateClient().SendAsync(message);
                 }
                 else
@@ -101,7 +105,6 @@ namespace BankingClient.Data
                 if (response.IsSuccessStatusCode)
                 {
                     var jsonstring = await response.Content.ReadAsStringAsync();
-
                     return await GetDeserializeObjectAsync<BankingAccount>(jsonstring);
                 }
                 else
@@ -135,7 +138,7 @@ namespace BankingClient.Data
 
                 if (_cookieContainer.Count > 0)
                 {
-                    HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Get, queryhelper), _cookieContainer, loginUrl);
+                    HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Get, queryhelper, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                     response = await _clientFactory.CreateClient().SendAsync(message);
                 }
                 else
@@ -151,7 +154,7 @@ namespace BankingClient.Data
                 }
                 else
                 {
-                    return new BankingAccount[0];
+                    return Array.Empty<BankingAccount>();
                 }
 
             });
@@ -165,7 +168,7 @@ namespace BankingClient.Data
 
             if (_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Post, postAccountToApi), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Post, postAccountToApi, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(bankingAccount);
                 _logger.LogInformation("Post Request to {0} ", postAccountToApi);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
@@ -196,7 +199,7 @@ namespace BankingClient.Data
 
             if (_cookieContainer.Count > 0) //Request with Cookies
             {
-                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Patch, queryhelper), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Patch, queryhelper, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                 message.Content = await GetSerializeStringContentAsync<PatchBankingAccount>(new PatchBankingAccount(bankingAccount, DateTime.Now, _userState.Username));
                 _logger.LogInformation("Patch Request to {0} ", queryhelper);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
@@ -235,7 +238,7 @@ namespace BankingClient.Data
 
             if(_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await PutCookiesOnRequest(new HttpRequestMessage(HttpMethod.Delete, queryhelper), _cookieContainer, loginUrl);
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Delete, queryhelper, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                 _logger.LogInformation("Delete Request to {0} ", queryhelper);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }

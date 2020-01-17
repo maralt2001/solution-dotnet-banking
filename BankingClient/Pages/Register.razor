@@ -6,7 +6,7 @@
         <p>Enter your Credentials</p>
 
         <EditForm Model="@RegisterApplicationUser" OnValidSubmit="@RegisterUser">
-            <DataAnnotationsValidator />
+            
             <label for="user">Email:</label>
             <InputText class="form-control" id="user" type="email" @bind-Value="@Username" placeholder="..." />
             <p />
@@ -15,7 +15,7 @@
             <p />
             <label for="Confirm Password:">Confirm Password:</label>
             <InputText class="form-control" id="ConfirmPassword" type="password" @bind-Value="@ConfirmPassword" placeholder="..." />
-            <ValidationSummary />
+            
             <button style="margin-top: 25px" type="submit" class="btn btn-primary">Submit</button>
         </EditForm>
 
