@@ -45,12 +45,12 @@ services:
      - RelLoginUri=/api/user/login
      - RelLogoutUri=/api/user/logout
      - RelRegisterUri=/api/user/register
-     - BankingApiGetAllAccounts=http://banking-api/api/banking/accounts/getall
-     - BankingApiGetOneAccountRegex=http://banking-api/api/banking/account/getoneregex
-     - BankingApiGetAccountsRegex=http://banking-api/api/banking/accounts/getaccountsregex
-     - BankingApiPostAccount=http://banking-api/api/banking/account/create
-     - BankingApiUpdateAccount=http://banking-api/api/banking/account/update
-     - BankingApiDeleteAccount=http://banking-api/api/banking/account/delete
+     - RelGetAllAccounts=/api/banking/accounts/getall
+     - RelGetOneAccountRegex=/api/banking/account/getoneregex
+     - RelGetAccountsRegex=/api/banking/accounts/getaccountsregex
+     - RelPostAccount=/api/banking/account/create
+     - RelUpdateAccount=/api/banking/account/update
+     - RelDeleteAccount=/api/banking/account/delete
     depends_on: 
       - bankingapi
 

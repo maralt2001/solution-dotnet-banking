@@ -17,15 +17,15 @@ namespace BankingClient.Data
 {
     public class BankingAccountsService : IBankingAccountsService
     {
-        private readonly CookieContainer _cookieContainer;
         private readonly string backEndUri;
         private readonly string relLoginUri;
-        private readonly string getAllAccountsFromApi;
-        private readonly string getAccountsRegexFromApi;
-        private readonly string postAccountToApi;
-        private readonly string updateAccountToApi;
-        private readonly string deleteAccountToApi;
+        private readonly string relGetAllAccounts;
+        private readonly string relGetAccountsRegex;
+        private readonly string relPostAccount;
+        private readonly string relUpdateAccount;
+        private readonly string relDeleteAccount;
 
+        private readonly CookieContainer _cookieContainer;
         private readonly ILogger<BankingAccountsService> _logger;
         private readonly IHttpClientFactory _clientFactory;
         private readonly UserState _userState;
@@ -33,15 +33,15 @@ namespace BankingClient.Data
 
         public BankingAccountsService(CookieContainer cookieContainer, IConfiguration configuration, ILogger<BankingAccountsService> logger, UserState userState, IHttpClientFactory clientFactory)
         {
-            _cookieContainer = cookieContainer;
             backEndUri = configuration.GetSection("BackEndUri").Value;
             relLoginUri = configuration.GetSection("RelLoginUri").Value;
+            relGetAllAccounts = configuration.GetSection("RelGetAllAccounts").Value;
+            relGetAccountsRegex = configuration.GetSection("RelGetAccountsRegex").Value;
+            relPostAccount = configuration.GetSection("RelPostAccount").Value;
+            relUpdateAccount = configuration.GetSection("RelUpdateAccount").Value;
+            relDeleteAccount = configuration.GetSection("RelDeleteAccount").Value;
             
-            getAllAccountsFromApi = configuration.GetSection("BankingApiGetAllAccounts").Value;
-            getAccountsRegexFromApi = configuration.GetSection("BankingApiGetAccountsRegex").Value;
-            postAccountToApi = configuration.GetSection("BankingApiPostAccount").Value;
-            updateAccountToApi = configuration.GetSection("BankingApiUpdateAccount").Value;
-            deleteAccountToApi = configuration.GetSection("BankingApiDeleteAccount").Value;
+            _cookieContainer = cookieContainer;
             _logger = logger;
             _clientFactory = clientFactory;
             _userState = userState;
@@ -56,13 +56,13 @@ namespace BankingClient.Data
             
             if (_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Get, getAllAccountsFromApi, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
-                _logger.LogInformation("Get Request to {0} ", getAllAccountsFromApi);
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Get, backEndUri + relGetAllAccounts, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
+                _logger.LogInformation("Get Request to {0} ", backEndUri + relGetAllAccounts);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
             else
             {
-                responseMessage = await _clientFactory.CreateClient().GetAsync(getAllAccountsFromApi);
+                responseMessage = await _clientFactory.CreateClient().GetAsync(backEndUri + relGetAllAccounts);
             }
 
             if (responseMessage.IsSuccessStatusCode)
@@ -89,7 +89,7 @@ namespace BankingClient.Data
                     { "regexvalue", value }
                 };
                 // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
-                string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
+                string queryhelper = QueryHelpers.AddQueryString(backEndUri+relGetAccountsRegex, query).Replace("\"", string.Empty);
                 _logger.LogInformation("Get Request to {0}", queryhelper);
 
                 if (_cookieContainer.Count > 0)
@@ -131,7 +131,7 @@ namespace BankingClient.Data
                 };
 
                 // Create Url with Query Params. Replace the double quotes from template string getAccountsRegexFromApi
-                string queryhelper = QueryHelpers.AddQueryString(getAccountsRegexFromApi, query).Replace("\"", string.Empty);
+                string queryhelper = QueryHelpers.AddQueryString(backEndUri+relGetAccountsRegex, query).Replace("\"", string.Empty);
                 _logger.LogInformation("Get Request to {0}", queryhelper);
 
                 
@@ -168,9 +168,9 @@ namespace BankingClient.Data
 
             if (_cookieContainer.Count > 0)
             {
-                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Post, postAccountToApi, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
+                HttpRequestMessage message = await new RequestMessageFactory(HttpMethod.Post, backEndUri+relPostAccount, backEndUri + relLoginUri, _cookieContainer).GetMessageAsync();
                 message.Content = await GetSerializeStringContentAsync<BankingAccount>(bankingAccount);
-                _logger.LogInformation("Post Request to {0} ", postAccountToApi);
+                _logger.LogInformation("Post Request to {0} ", backEndUri+relPostAccount);
                 responseMessage = await _clientFactory.CreateClient().SendAsync(message);
             }
             else
@@ -195,7 +195,7 @@ namespace BankingClient.Data
                     { "id", bankingAccount._id }
                    
                 };
-            string queryhelper = QueryHelpers.AddQueryString(updateAccountToApi, query).Replace("\"", string.Empty);
+            string queryhelper = QueryHelpers.AddQueryString(backEndUri+relUpdateAccount, query).Replace("\"", string.Empty);
 
             if (_cookieContainer.Count > 0) //Request with Cookies
             {
@@ -234,7 +234,7 @@ namespace BankingClient.Data
                 {"id", id }
             };
 
-            string queryhelper = QueryHelpers.AddQueryString(deleteAccountToApi, query).Replace("\"", string.Empty);
+            string queryhelper = QueryHelpers.AddQueryString(backEndUri+relDeleteAccount, query).Replace("\"", string.Empty);
 
             if(_cookieContainer.Count > 0)
             {
@@ -261,7 +261,7 @@ namespace BankingClient.Data
         public async IAsyncEnumerable<BankingAccount> GetAccountsAsyncEnumerable()
         {
             
-            var response = await _clientFactory.CreateClient().GetAsync(getAllAccountsFromApi);
+            var response = await _clientFactory.CreateClient().GetAsync(backEndUri + relGetAllAccounts);
             if (response.IsSuccessStatusCode)
             {
                 var jsonstring = await response.Content.ReadAsStringAsync();
