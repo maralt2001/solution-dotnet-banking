@@ -41,9 +41,10 @@ services:
     ports: 
       - 5005:80
     environment:
-     - BankingApiLoginPath=http://banking-api/api/user/login
-     - BankingApiLogoutPath=http://banking-api/api/user/logout
-     - BankingApiRegisterPath=http://banking-api/api/user/register
+     - BackEndUri=http://banking-api
+     - RelLoginUri=/api/user/login
+     - RelLogoutUri=/api/user/logout
+     - RelRegisterUri=/api/user/register
      - BankingApiGetAllAccounts=http://banking-api/api/banking/accounts/getall
      - BankingApiGetOneAccountRegex=http://banking-api/api/banking/account/getoneregex
      - BankingApiGetAccountsRegex=http://banking-api/api/banking/accounts/getaccountsregex
