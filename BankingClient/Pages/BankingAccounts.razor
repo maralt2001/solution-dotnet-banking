@@ -13,7 +13,7 @@
         <h2>Banking Accounts Workbook</h2>
         <br />
         <div class="input-group">
-            <input class="form-control" type="text" placeholder="search by" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton" />
+            <input class="form-control" type="search" placeholder="search by" @bind-value="@_SearchTextValue" @onkeydown="@EnableGoButton" />
             <div class="input-group-append">
                 <select class="custom-select" @onchange="@SetSelectedOption">
                     @foreach (var item in _SearchOptions)
