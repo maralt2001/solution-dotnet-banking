@@ -1,0 +1,29 @@
+﻿@page "/jwt"
+@using ServiceApiData
+@using BankingClient.Provider;
+@using ApiAccess;
+@using BankingClient.Data;
+
+<p>hallo</p>
+<button type="button" @onclick="GetJwtUser">Get Token</button>
+<p>@JwtUser.UserEmail</p>
+<p>@JwtUser.UserToken</p>
+
+@code {
+
+    [Parameter] public JwtUserResult JwtUser { get; set; } = new JwtUserResult();
+    [Inject] public UserState _UserState { get; set; }
+    [Inject] public ApplicationUser applicationUser { get; set; }
+    [Inject] ApiUserService UserService { get; set; }
+
+    public async void GetJwtUser()
+    {
+        if (_UserState.IsLoggedIn == true)
+        {
+            applicationUser.email = _UserState.Username;
+            applicationUser.password = "hallo";
+            JwtUser = await UserService.GetJwtUser(applicationUser);
+        }
+        StateHasChanged();
+    }
+}

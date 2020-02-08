@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using ApiDataService;
 using static HttpService.Content;
 using ServiceHttp;
+using ServiceApiData;
 
 namespace BankingClient.Data
 {
@@ -120,6 +121,33 @@ namespace BankingClient.Data
                 return new RegisterResult { IsRegistered = false };
             }
             
+        }
+
+        //Request to api/token return JwtUserResult
+        public async Task<JwtUserResult> GetJwtUser (ApplicationUser applicationUser)
+        {
+            if(applicationUser.email != string.Empty)
+            {
+                StringContent content = await GetSerializeStringContentAsync(applicationUser);
+                var client = _clientFactory.CreateClient();
+                client.BaseAddress = new Uri(backEndUri);
+
+                var response = await client.PostAsync("/api/token", content);
+
+                if(response.IsSuccessStatusCode)
+                {
+                    var jsonstring = await response.Content.ReadAsStringAsync();
+                    return await GetDeserializeObjectAsync<JwtUserResult>(jsonstring);
+                }
+                else
+                {
+                    return new JwtUserResult { UserEmail = applicationUser.email, UserToken = string.Empty};
+                }
+            }
+            else
+            {
+                return new JwtUserResult { UserEmail = string.Empty, UserToken = string.Empty };
+            }
         }
         
     }

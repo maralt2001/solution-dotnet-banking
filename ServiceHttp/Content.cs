@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Dynamic;
+using System.Net.Http.Headers;
 
 namespace HttpService
 {
@@ -86,6 +87,19 @@ namespace HttpService
             return result;
 
         }
+
+        public static Task<AuthenticationHeaderValue> GetAuthenticationHeaderWithJWT(string jsonWebToken)
+        {
+            return Task.Run(() =>
+            {
+                AuthenticationHeaderValue x = new AuthenticationHeaderValue("Bearer", jsonWebToken);
+                return x;
+            });
+           
+
+        }
+
+
 
     }
 }

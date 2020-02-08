@@ -22,10 +22,11 @@ namespace BankingClient
             Configuration = configuration;
            
         }
+
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRazorPages();
+            services.AddRazorPages().AddMvcOptions(options => options.EnableEndpointRouting = false); 
             services.AddServerSideBlazor();
             services.AddScoped<IBankingAccountsService,BankingAccountsService>();
             services.AddScoped<ApiUserService>();
@@ -36,6 +37,7 @@ namespace BankingClient
             services.AddScoped<RegisterApplicationUser>();
             services.AddHttpClient();
             
+           
 
         }
 
