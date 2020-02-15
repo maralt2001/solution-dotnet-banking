@@ -206,6 +206,7 @@ namespace BankingApi.Controllers
         [Route("api/banking/accounts/getall")]
         [Produces("application/json")]
         [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetBankingAccounts()
         {
             try
