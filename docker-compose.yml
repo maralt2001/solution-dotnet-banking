@@ -1,12 +1,12 @@
-# Use root/example as user/password credentials
 version: '3.4'
-
+#create docker volumes for mongodb
 volumes: 
   mongodata:
     name: "MongoData-WebDB"
+  mongoconfig:
+    name: "MongoConfig-WebDB"
 
 services:
-
   mongo:
     image: mongo:latest
     restart: always
@@ -17,8 +17,8 @@ services:
     ports:
         - 27018:27017
     volumes: 
-       - mongodata:/data/db 
-
+       - mongodata:/data/db
+       - mongoconfig:/data/configdb 
   bankingapi:
     image: bankingapi
     container_name: banking-api
@@ -31,7 +31,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Production
     depends_on:
       - mongo
-
   bankingclient:
     image: bankingclient
     container_name: banking-client
