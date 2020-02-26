@@ -14,7 +14,7 @@ namespace ServiceApiData
         [Required(ErrorMessage = "key is required")]
         public string key { get; set; }
         [Required(ErrorMessage = "data is required")]
-        public object data;
+        public string data { get; set; }
 
        
     }

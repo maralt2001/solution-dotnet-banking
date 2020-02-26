@@ -25,7 +25,6 @@ namespace BankingApi.Controllers
         [HttpPost]
         [Route("api/banking/data/encrypt")]
         [Produces("application/json")]
-        
         public async Task<IActionResult> EncryptData([FromBody] DataProtection protection )
         {
             
@@ -33,7 +32,40 @@ namespace BankingApi.Controllers
                 string encrypt = _protector.EncryptData<DataProtection>(protection, "Stage1");
                 return encrypt;
             });
-            return Ok(await result);
+
+            var output = await result;
+            if(output != null)
+            {
+                return Ok(output);
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
+        [HttpPost]
+        [Route("api/banking/data/decrypt")]
+        [Produces("application/json")]
+        public async Task<IActionResult> DecryptData([FromBody] DataProtection protection)
+        {
+            var result = Task.Run(() => {
+
+                var decyrpt = _protector.GetDecryptData<DataProtection>(protection.data, "Stage1");
+                return decyrpt;
+            
+            });
+
+            var output = await result;
+
+            if (output != null)
+            {
+                return Ok(output);
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+
         }
     }
 }
