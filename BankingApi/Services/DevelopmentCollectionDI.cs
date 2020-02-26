@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoService;
 using ApiAccess;
+using ServiceDataProtection;
 
 namespace BankingApi.Services
 {
@@ -31,6 +32,8 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
+
+            services.AddSingleton<IProtector>(sp => new Protector());
             
            
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoService;
+using ServiceDataProtection;
 
 namespace BankingApi.Services
 {
@@ -28,7 +29,7 @@ namespace BankingApi.Services
 
             });
 
-
+            services.AddSingleton<IProtector>(sp => new Protector());
 
             return services;
         }
