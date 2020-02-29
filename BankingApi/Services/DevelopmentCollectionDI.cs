@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoService;
 using ApiAccess;
-using ServiceDataProtection;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace BankingApi.Services
 {
@@ -33,9 +33,6 @@ namespace BankingApi.Services
 
             });
 
-            services.AddSingleton<IProtector>(sp => new Protector());
-            
-           
 
             return services;
 

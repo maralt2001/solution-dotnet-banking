@@ -4,7 +4,7 @@ namespace ServiceDataProtection
 {
     public interface IProtector
     {
-        string EncryptData<T>(T data, string purpose);
-        T GetDecryptData<T>(string data, string purpose);
+        string EncryptData<T>(T data);
+        T GetDecryptData<T>(string data);
     }
 }

@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceApiData", "ServiceAp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{7BEB350D-6BAE-4167-9531-66FE47198303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceDataProtection", "ServiceDataProtection\ServiceDataProtection.csproj", "{1F09F887-AAF5-4BE0-A44A-9B6988565D62}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,10 +47,6 @@ Global
 		{16387E5D-D6E5-4729-BC6A-0084254DA5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16387E5D-D6E5-4729-BC6A-0084254DA5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16387E5D-D6E5-4729-BC6A-0084254DA5AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F09F887-AAF5-4BE0-A44A-9B6988565D62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F09F887-AAF5-4BE0-A44A-9B6988565D62}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F09F887-AAF5-4BE0-A44A-9B6988565D62}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F09F887-AAF5-4BE0-A44A-9B6988565D62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,7 +56,6 @@ Global
 		{CEBB0930-D1B5-4EC4-818E-E896800BF531} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 		{A358A537-7DC4-41B3-87DF-0F2956684CD0} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 		{16387E5D-D6E5-4729-BC6A-0084254DA5AD} = {7BEB350D-6BAE-4167-9531-66FE47198303}
-		{1F09F887-AAF5-4BE0-A44A-9B6988565D62} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EADF5B0F-7893-4B79-91BD-668C6D98400A}
