@@ -10,6 +10,7 @@ COPY ["BankingApi/BankingApi.csproj", "BankingApi/"]
 COPY ["ServiceMongo/ServiceMongo.csproj", "ServiceMongo/"]
 COPY ["ServiceApiAccess/ServiceApiAccess.csproj", "ServiceApiAccess/"]
 COPY ["ServiceApiData/ServiceApiData.csproj", "ServiceApiData/"]
+COPY ["ServiceDataProtection/ServiceDataProtection.csproj", "ServiceDataProtection/"]
 RUN dotnet restore "BankingApi/BankingApi.csproj"
 COPY . .
 WORKDIR "/src/BankingApi"
