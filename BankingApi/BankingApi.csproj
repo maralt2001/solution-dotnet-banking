@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ServiceApiAccess\ServiceApiAccess.csproj" />
     <ProjectReference Include="..\ServiceApiData\ServiceApiData.csproj" />
+    <ProjectReference Include="..\ServiceDataProtection\ServiceDataProtection.csproj" />
     <ProjectReference Include="..\ServiceMongo\ServiceMongo.csproj" />
   </ItemGroup>
 
