@@ -36,7 +36,7 @@ namespace BankingApi.Controllers
                 Cipher = await result
             };
             _logger.LogInformation("Return encryption value ");
-            return Ok(response);
+            return new OkObjectResult(response);
 
         }
 
@@ -57,11 +57,10 @@ namespace BankingApi.Controllers
             if(response.Decrypted != string.Empty)
             {
                 _logger.LogInformation("Return decrytion value");
-                return Ok(response);
+                return new OkObjectResult(response);
             }
-            response.Decrypted = "decryption failed";
             _logger.LogWarning("decrytion failed");
-            return StatusCode(400, response);
+            return new BadRequestObjectResult($"Can not decrypt your request");
 
 
         }
@@ -81,7 +80,7 @@ namespace BankingApi.Controllers
                 Cipher = await result
             };
             _logger.LogInformation("Return encryption value ");
-            return Ok(response);
+            return new OkObjectResult(response);
         }
 
         [HttpPost]
@@ -103,9 +102,9 @@ namespace BankingApi.Controllers
                 _logger.LogInformation("Return decryption value ");
                 return Ok(response);
             }
-            response.Decrypted = "decryption failed";
             _logger.LogWarning("decrytion failed");
-            return StatusCode(400, response);
+            return new BadRequestObjectResult($"Can not decrypt your request");
+            
            
 
         }

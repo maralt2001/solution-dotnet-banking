@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace BankingApi.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class CheckDecryptRequestBodyAttribute : Attribute, IAsyncActionFilter
+    public class CheckDecryptRequestBody : Attribute, IAsyncActionFilter
     {
         private readonly int _cipherLength;
-        public CheckDecryptRequestBodyAttribute(int cipherLength)
+        public CheckDecryptRequestBody(int cipherLength)
         {
             _cipherLength = cipherLength;
         }
