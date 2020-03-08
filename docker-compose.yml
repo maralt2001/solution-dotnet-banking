@@ -5,6 +5,8 @@ volumes:
     name: "MongoData-WebDB"
   mongoconfig:
     name: "MongoConfig-WebDB"
+  redisdata:
+    name: "Redis-Data"
 
 services:
   mongo:
@@ -52,5 +54,14 @@ services:
      - RelDeleteAccount=/api/banking/account/delete
     depends_on: 
       - bankingapi
-
+  redis:
+    image: redis
+    container_name: cache
+    build:
+      context: ./
+      dockerfile: Dockerfile.redis
+    ports: 
+    - 6379:6379
+    volumes:
+      - redisdata:/data
   
