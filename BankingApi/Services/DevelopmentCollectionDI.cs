@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoService;
 using ApiAccess;
-using Microsoft.AspNetCore.DataProtection;
+
+using StackExchange.Redis;
 
 namespace BankingApi.Services
 {
@@ -32,7 +32,12 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
-
+            services.AddSingleton<IDatabase>(sp => 
+                ConnectionMultiplexer.Connect(
+                    new ConfigurationOptions { 
+                        EndPoints = { configuration.GetSection("RedisConnectionPath").Value } 
+                    }).GetDatabase()
+            );
 
             return services;
 

@@ -17,29 +17,22 @@ namespace BankingApi.Controllers
         private readonly ILogger<CryptController> _logger;
         readonly IDatabase _cache;
 
-        public CryptController(ILogger<CryptController> logger)
+        public CryptController(ILogger<CryptController> logger, IDatabase cache)
         {
             _logger = logger;
-            var configurationOptions = new ConfigurationOptions
-            {
-                EndPoints = { "host.docker.internal:6379" }
-            };
-            _cache = ConnectionMultiplexer.Connect(configurationOptions).GetDatabase();
-            
-
+            _cache = cache;
 
         }
 
         [HttpGet]
         [Route("api/banking/data/encrypt")]
         [Produces("application/json")]
-        
         //implement check length of data
         public async Task<IActionResult> Encrypt([FromQuery] string data)
         {
             var result = Task.Run(() => 
             {
-                _cache.StringSet("encryptdata", data);
+                
                 return EncryptionHelper.Encrypt(data, "abc");
             });
             ResponseEncryt response = new ResponseEncryt
@@ -48,6 +41,7 @@ namespace BankingApi.Controllers
             };
 
             _logger.LogInformation("Return encryption value ");
+            _cache.StringSet("encryptdata", response.Cipher);
             return new OkObjectResult(response);
 
         }

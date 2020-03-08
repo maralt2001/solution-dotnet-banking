@@ -28,7 +28,8 @@
         "CollectionName": "Banking_Accounts",
         "DBName": "WebDB",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DBConnectionPath": "mongodb://localhost"
+        "DBConnectionPath": "mongodb://localhost",
+        "RedisConnectionPath": "host.docker.internal:6379"
       },
       "applicationUrl": "http://localhost:5000/"
     },
@@ -40,7 +41,8 @@
         "CollectionName": "Banking_Accounts",
         "DBName": "WebDB",
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DBConnectionPath": "mongodb://host.docker.internal"
+        "DBConnectionPath": "mongodb://host.docker.internal",
+        "RedisConnectionPath": "host.docker.internal:6379"
       },
       "httpPort": 51496
     }
