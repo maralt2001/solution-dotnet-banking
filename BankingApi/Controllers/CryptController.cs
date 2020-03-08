@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using BankingApi.Attributes;
+using StackExchange.Redis;
 
 namespace BankingApi.Controllers
 {
@@ -14,10 +15,19 @@ namespace BankingApi.Controllers
     public class CryptController : ControllerBase
     {
         private readonly ILogger<CryptController> _logger;
+        readonly IDatabase _cache;
 
         public CryptController(ILogger<CryptController> logger)
         {
             _logger = logger;
+            var configurationOptions = new ConfigurationOptions
+            {
+                EndPoints = { "host.docker.internal:6379" }
+            };
+            _cache = ConnectionMultiplexer.Connect(configurationOptions).GetDatabase();
+            
+
+
         }
 
         [HttpGet]
@@ -29,12 +39,14 @@ namespace BankingApi.Controllers
         {
             var result = Task.Run(() => 
             {
+                _cache.StringSet("encryptdata", data);
                 return EncryptionHelper.Encrypt(data, "abc");
             });
             ResponseEncryt response = new ResponseEncryt
             {
                 Cipher = await result
             };
+
             _logger.LogInformation("Return encryption value ");
             return new OkObjectResult(response);
 
