@@ -42,6 +42,7 @@ namespace BankingApi.Controllers
 
             _logger.LogInformation("Return encryption value ");
             _cache.StringSet("encryptdata", response.Cipher);
+            _logger.LogInformation("redis set encrypt data");
             return new OkObjectResult(response);
 
         }

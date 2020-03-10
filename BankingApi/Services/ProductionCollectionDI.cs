@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoService;
-
+using StackExchange.Redis;
 
 namespace BankingApi.Services
 {
@@ -28,6 +28,14 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
+
+            services.AddSingleton<IDatabase>(sp =>
+                ConnectionMultiplexer.Connect(
+                    new ConfigurationOptions
+                    {
+                        EndPoints = { configuration.GetSection("Redis").GetSection("ConnectionPath").Value }
+                    }).GetDatabase()
+            );
 
 
             return services;
