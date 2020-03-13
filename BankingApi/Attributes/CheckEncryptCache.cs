@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using StackExchange.Redis;
 
@@ -23,6 +24,7 @@ namespace BankingApi.Attributes
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var cache = (IDatabase) CacheProvider.GetService(typeof(IDatabase));
+            
             if(cache.StringGet("originData") != context.ActionArguments.Values.FirstOrDefault().ToString())
             {
                 await next();

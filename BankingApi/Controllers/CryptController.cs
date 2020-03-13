@@ -41,10 +41,10 @@ namespace BankingApi.Controllers
                 Cipher = await result
             };
 
-            _logger.LogInformation("Return encryption value ");
+            _logger.LogInformation("Return encryption value from GetRequest ");
             _cache.StringSet("originData", data);
             _cache.StringSet("encryptdata", response.Cipher);
-            _logger.LogInformation("redis set encrypt data");
+            _logger.LogInformation("redis set encrypt data & origin Data");
             return new OkObjectResult(response);
 
         }
