@@ -1,4 +1,5 @@
 ﻿using ApiAccess;
+using BankingApi.Attributes;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -46,6 +47,8 @@ namespace BankingApi.Services
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            CheckEncryptCache.CacheProvider = app.ApplicationServices;
 
             app.UseEndpoints(endpoints =>
             {

@@ -15,7 +15,7 @@ namespace BankingApi.Controllers
     public class CryptController : ControllerBase
     {
         private readonly ILogger<CryptController> _logger;
-        readonly IDatabase _cache;
+        private readonly IDatabase _cache;
 
         public CryptController(ILogger<CryptController> logger, IDatabase cache)
         {
@@ -27,6 +27,7 @@ namespace BankingApi.Controllers
         [HttpGet]
         [Route("api/banking/data/encrypt")]
         [Produces("application/json")]
+        [CheckEncryptCache]
         //implement check length of data
         public async Task<IActionResult> Encrypt([FromQuery] string data)
         {
@@ -41,6 +42,7 @@ namespace BankingApi.Controllers
             };
 
             _logger.LogInformation("Return encryption value ");
+            _cache.StringSet("originData", data);
             _cache.StringSet("encryptdata", response.Cipher);
             _logger.LogInformation("redis set encrypt data");
             return new OkObjectResult(response);

@@ -9,6 +9,7 @@ using MongoService;
 using ApiAccess;
 
 using StackExchange.Redis;
+using BankingApi.Attributes;
 
 namespace BankingApi.Services
 {
@@ -39,6 +40,7 @@ namespace BankingApi.Services
                     }).GetDatabase()
             );
 
+
             return services;
 
         }
@@ -50,6 +52,8 @@ namespace BankingApi.Services
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            CheckEncryptCache.CacheProvider = app.ApplicationServices;
 
             app.UseEndpoints(endpoints =>
             {
