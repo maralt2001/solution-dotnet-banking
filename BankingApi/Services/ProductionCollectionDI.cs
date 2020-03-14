@@ -34,7 +34,8 @@ namespace BankingApi.Services
                 ConnectionMultiplexer.Connect(
                     new ConfigurationOptions
                     {
-                        EndPoints = { configuration.GetSection("Redis").GetSection("ConnectionPath").Value }
+                        EndPoints = { configuration.GetSection("Redis").GetSection("ConnectionPath").Value },
+                        ConnectRetry = 3
                     }).GetDatabase()
             );
 

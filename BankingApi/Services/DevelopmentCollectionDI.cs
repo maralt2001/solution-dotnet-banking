@@ -34,9 +34,10 @@ namespace BankingApi.Services
 
             });
             services.AddSingleton<IDatabase>(sp => 
-                ConnectionMultiplexer.Connect(
+                    ConnectionMultiplexer.Connect(
                     new ConfigurationOptions { 
-                        EndPoints = { configuration.GetSection("RedisConnectionPath").Value } 
+                        EndPoints = { configuration.GetSection("RedisConnectionPath").Value } ,
+                        ConnectRetry = 3 
                     }).GetDatabase()
             );
 
