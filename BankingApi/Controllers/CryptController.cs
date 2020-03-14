@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using BankingApi.Attributes;
 using StackExchange.Redis;
+using System;
 
 namespace BankingApi.Controllers
 {
@@ -38,12 +39,13 @@ namespace BankingApi.Controllers
             });
             ResponseEncryt response = new ResponseEncryt
             {
-                Cipher = await result
+                Cipher = await result,
+                CreatedAt = DateTime.Now.ToShortDateString()
             };
 
             _logger.LogInformation("Return encryption value from GetRequest ");
             _cache.StringSet("originData", data);
-            _cache.StringSet("encryptdata", response.Cipher);
+            _cache.StringSet("encryptData", response.Cipher);
             _logger.LogInformation("redis set encrypt data & origin Data");
             return new OkObjectResult(response);
 
@@ -86,7 +88,8 @@ namespace BankingApi.Controllers
             });
             ResponseEncryt response = new ResponseEncryt
             {
-                Cipher = await result
+                Cipher = await result,
+                CreatedAt = DateTime.Now.ToShortDateString()
             };
             _logger.LogInformation("Return encryption value ");
             return new OkObjectResult(response);

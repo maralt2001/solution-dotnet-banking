@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using StackExchange.Redis;
 
 namespace BankingApi.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class CheckEncryptCache : Attribute, IAsyncActionFilter, ICheckEncryptCache
+    public class CheckEncryptCache : Attribute, IAsyncActionFilter
     {
         public static IServiceProvider CacheProvider { get; set; }
 
@@ -31,8 +28,8 @@ namespace BankingApi.Attributes
             }
             else
             {
-                var getCacheValue = cache.StringGet("encryptdata");
-                context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getCacheValue });
+                var getCacheValue = cache.StringGet("encryptData");
+                context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getCacheValue, CreatedAt = DateTime.Now.ToShortDateString() });
             }
             
 

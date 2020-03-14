@@ -7,5 +7,6 @@ namespace ServiceDataProtection
     public class ResponseEncryt
     {
         public string Cipher { get; set; }
+        public string CreatedAt { get; set; }
     }
 }
