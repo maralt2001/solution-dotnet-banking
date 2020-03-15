@@ -7,6 +7,8 @@ using ServiceDataProtection;
 using BankingApi.Attributes;
 using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
+using BankingApi.Helpers;
 
 namespace BankingApi.Controllers
 {
@@ -32,9 +34,9 @@ namespace BankingApi.Controllers
         //implement check length of data
         public async Task<IActionResult> Encrypt([FromQuery] string data)
         {
-            var result = Task.Run(() => 
+            var result = Task.Run(() =>
             {
-                
+
                 return EncryptionHelper.Encrypt(data, "abc");
             });
             ResponseEncryt response = new ResponseEncryt
@@ -44,11 +46,25 @@ namespace BankingApi.Controllers
             };
 
             _logger.LogInformation("Return encryption value from GetRequest ");
-            _cache.StringSet("originData", data);
-            _cache.StringSet("encryptData", response.Cipher);
-            _logger.LogInformation("redis set encrypt data & origin Data");
-            return new OkObjectResult(response);
 
+
+            bool storeInRedis = await RedisDataLayer.CachingStrings(_cache, new KeyValuePair<RedisKey, RedisValue>[]
+            {
+                new KeyValuePair<RedisKey, RedisValue>("originData", data),
+                new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher)
+            });
+
+            if (storeInRedis)
+            {
+                _logger.LogInformation("redis set encrypt data & origin Data");
+                return new OkObjectResult(response);
+
+            }
+            else
+            {
+                _logger.LogError("redis caching went wrong");
+                return new BadRequestObjectResult(response.Cipher = "");
+            }
         }
 
         [HttpGet]
