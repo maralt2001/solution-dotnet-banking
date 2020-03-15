@@ -9,20 +9,20 @@ namespace BankingApi.Helpers
 {
     public abstract class RedisDataLayer
     {
-		
-        public static Task<bool> CachingStrings(IDatabase cache, ILogger logger, KeyValuePair<RedisKey,RedisValue>[] keyValues)
+		public static ILogger _logger { get; set; }
+        public static Task<bool> CachingStrings(IDatabase cache, KeyValuePair<RedisKey,RedisValue>[] keyValues)
         {
 			var result = Task.Run(() => 
 			{
 				try
 				{
 					cache.StringSet(keyValues);
-					logger.LogInformation("caching strings in redis");
+					_logger.LogInformation("caching strings in redis");
 					return true;
 				}
 				catch (Exception)
 				{
-					logger.LogWarning("caching string in redis went wrong");
+					_logger.LogWarning("caching string in redis went wrong");
 					return false;
 				}
 			});
@@ -31,18 +31,18 @@ namespace BankingApi.Helpers
 			
         }
 
-		public static Task<RedisValue[]> GetStringsFromCache(IDatabase cache, ILogger logger, RedisKey[] redisKeys)
+		public static Task<RedisValue[]> GetStringsFromCache(IDatabase cache, RedisKey[] redisKeys)
 		{
 			var result = Task.Run(() => 
 			{
 				try
 				{
-					logger.LogInformation("reading values from redis cache");
+					_logger.LogInformation("reading values from redis cache");
 					return cache.StringGet(redisKeys);
 				}
 				catch (Exception)
 				{
-					logger.LogWarning("reading values from redis cache went wrong");
+					_logger.LogWarning("reading values from redis cache went wrong");
 					return Array.Empty<RedisValue>();
 				}
 			});

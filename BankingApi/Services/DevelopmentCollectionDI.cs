@@ -12,6 +12,7 @@ using StackExchange.Redis;
 using BankingApi.Attributes;
 using Microsoft.Extensions.Logging;
 using BankingApi.Controllers;
+using BankingApi.Helpers;
 
 namespace BankingApi.Services
 {
@@ -57,7 +58,7 @@ namespace BankingApi.Services
             app.UseAuthorization();
 
             CheckEncryptCache.CacheProvider = app.ApplicationServices;
-
+            RedisDataLayer._logger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisDataLayer");
             app.UseEndpoints(endpoints =>
             {
 

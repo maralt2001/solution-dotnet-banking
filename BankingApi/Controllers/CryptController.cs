@@ -48,7 +48,7 @@ namespace BankingApi.Controllers
             _logger.LogInformation("Return encryption value from GetRequest ");
 
 
-            bool storeInRedis = await RedisDataLayer.CachingStrings(_cache, _logger, new KeyValuePair<RedisKey, RedisValue>[]
+            bool storeInRedis = await RedisDataLayer.CachingStrings(_cache, new KeyValuePair<RedisKey, RedisValue>[]
             {
                 new KeyValuePair<RedisKey, RedisValue>("originData", data),
                 new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher)

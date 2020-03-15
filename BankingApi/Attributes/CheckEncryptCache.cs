@@ -18,8 +18,7 @@ namespace BankingApi.Attributes
         public static ILogger logger { get; set; }
         public CheckEncryptCache()
         {
-            ILoggerFactory factory = LoggerFactory.Create(builder => { builder.AddConsole();});
-            logger = factory.CreateLogger("CheckEncryptCache");
+           
 
         }
 
@@ -27,7 +26,7 @@ namespace BankingApi.Attributes
         {
             var cache = (IDatabase) CacheProvider.GetService(typeof(IDatabase));
 
-            RedisValue[] getValues = await RedisDataLayer.GetStringsFromCache(cache,logger, new RedisKey[] { "originData", "encryptData" });
+            RedisValue[] getValues = await RedisDataLayer.GetStringsFromCache(cache, new RedisKey[] { "originData", "encryptData" });
             
             if (getValues[0] != context.ActionArguments.Values.FirstOrDefault().ToString() 
                 || string.IsNullOrEmpty(getValues[0])

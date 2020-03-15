@@ -1,10 +1,12 @@
 ﻿using ApiAccess;
 using BankingApi.Attributes;
+using BankingApi.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using MongoService;
 using StackExchange.Redis;
 
@@ -50,7 +52,7 @@ namespace BankingApi.Services
             app.UseAuthorization();
 
             CheckEncryptCache.CacheProvider = app.ApplicationServices;
-
+            RedisDataLayer._logger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisDataLayer");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
