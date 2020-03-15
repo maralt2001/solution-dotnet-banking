@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BankingApi.Controllers;
 using BankingApi.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using StackExchange.Redis;
 
@@ -13,18 +15,20 @@ namespace BankingApi.Attributes
     public class CheckEncryptCache : Attribute, IAsyncActionFilter
     {
         public static IServiceProvider CacheProvider { get; set; }
-
+        public static ILogger logger { get; set; }
         public CheckEncryptCache()
         {
-            
+            ILoggerFactory factory = LoggerFactory.Create(builder => { builder.AddConsole();});
+            logger = factory.CreateLogger("CheckEncryptCache");
+
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var cache = (IDatabase) CacheProvider.GetService(typeof(IDatabase));
 
-            RedisValue[] getValues = await RedisDataLayer.GetStringsFromCache(cache, new RedisKey[] { "originData", "encryptData" });
-
+            RedisValue[] getValues = await RedisDataLayer.GetStringsFromCache(cache,logger, new RedisKey[] { "originData", "encryptData" });
+            
             if (getValues[0] != context.ActionArguments.Values.FirstOrDefault().ToString() 
                 || string.IsNullOrEmpty(getValues[0])
                 || string.IsNullOrEmpty(getValues[1]))

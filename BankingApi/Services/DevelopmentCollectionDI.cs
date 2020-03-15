@@ -10,6 +10,8 @@ using ApiAccess;
 
 using StackExchange.Redis;
 using BankingApi.Attributes;
+using Microsoft.Extensions.Logging;
+using BankingApi.Controllers;
 
 namespace BankingApi.Services
 {
