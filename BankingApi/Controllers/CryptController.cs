@@ -8,7 +8,7 @@ using BankingApi.Attributes;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using BankingApi.Helpers;
+using ServiceRedis;
 
 namespace BankingApi.Controllers
 {
@@ -18,12 +18,13 @@ namespace BankingApi.Controllers
     public class CryptController : ControllerBase
     {
         private readonly ILogger<CryptController> _logger;
-        private readonly IDatabase _cache;
+        
+        private readonly ICacheContext _cacheContext;
 
-        public CryptController(ILogger<CryptController> logger, IDatabase cache)
+        public CryptController(ILogger<CryptController> logger, ICacheContext cacheContext)
         {
             _logger = logger;
-            _cache = cache;
+            _cacheContext = cacheContext;
 
         }
 
@@ -47,12 +48,12 @@ namespace BankingApi.Controllers
 
             _logger.LogInformation("Return encryption value from GetRequest ");
 
-
-            bool storeInRedis = await RedisDataLayer.CachingStrings(_cache, new KeyValuePair<RedisKey, RedisValue>[]
+            bool storeInRedis = await _cacheContext.SaveStringsAsync(new KeyValuePair<RedisKey, RedisValue>[]
             {
                 new KeyValuePair<RedisKey, RedisValue>("originData", data),
                 new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher)
-            });
+            },true);
+            
 
             if (storeInRedis)
             {

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MongoService;
-using StackExchange.Redis;
+using ServiceRedis;
 
 namespace BankingApi.Services
 {
@@ -31,16 +31,8 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
-
-            services.AddSingleton<IDatabase>(sp =>
-                ConnectionMultiplexer.Connect(
-                    new ConfigurationOptions
-                    {
-                        EndPoints = { configuration.GetSection("Redis").GetSection("ConnectionPath").Value },
-                        ConnectRetry = 3
-                    }).GetDatabase()
-            );
-
+            
+            services.AddSingleton<ICacheContext>(sp => new RedisClient(configuration.GetSection("Redis").GetSection("ConnectionPath").Value));
 
             return services;
         }
@@ -52,7 +44,7 @@ namespace BankingApi.Services
             app.UseAuthorization();
 
             CheckEncryptCache.CacheProvider = app.ApplicationServices;
-            RedisDataLayer._logger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisDataLayer");
+            CacheContext.ContextLogger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisCacheContext");
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

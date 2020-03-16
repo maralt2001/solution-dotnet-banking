@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		redis.conf = redis.conf
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceRedis", "ServiceRedis\ServiceRedis.csproj", "{CD65544A-18B4-46F4-B112-724589F0A5AA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{9608CD42-081D-4B7F-B195-7E9A6DE8554A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9608CD42-081D-4B7F-B195-7E9A6DE8554A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9608CD42-081D-4B7F-B195-7E9A6DE8554A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD65544A-18B4-46F4-B112-724589F0A5AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD65544A-18B4-46F4-B112-724589F0A5AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD65544A-18B4-46F4-B112-724589F0A5AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD65544A-18B4-46F4-B112-724589F0A5AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{A358A537-7DC4-41B3-87DF-0F2956684CD0} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 		{16387E5D-D6E5-4729-BC6A-0084254DA5AD} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 		{9608CD42-081D-4B7F-B195-7E9A6DE8554A} = {7BEB350D-6BAE-4167-9531-66FE47198303}
+		{CD65544A-18B4-46F4-B112-724589F0A5AA} = {7BEB350D-6BAE-4167-9531-66FE47198303}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EADF5B0F-7893-4B79-91BD-668C6D98400A}

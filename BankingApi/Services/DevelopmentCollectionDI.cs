@@ -1,5 +1,4 @@
 ﻿
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -7,12 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MongoService;
 using ApiAccess;
-
-using StackExchange.Redis;
+using ServiceRedis;
 using BankingApi.Attributes;
 using Microsoft.Extensions.Logging;
-using BankingApi.Controllers;
-using BankingApi.Helpers;
+
 
 namespace BankingApi.Services
 {
@@ -36,15 +33,8 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
-            services.AddSingleton<IDatabase>(sp => 
-                    ConnectionMultiplexer.Connect(
-                    new ConfigurationOptions { 
-                        EndPoints = { configuration.GetSection("RedisConnectionPath").Value } ,
-                        ConnectRetry = 3 
-                    }).GetDatabase()
-            );
 
-
+            services.AddSingleton<ICacheContext>(sp => new RedisClient(configuration.GetSection("RedisConnectionPath").Value));
             return services;
 
         }
@@ -58,7 +48,8 @@ namespace BankingApi.Services
             app.UseAuthorization();
 
             CheckEncryptCache.CacheProvider = app.ApplicationServices;
-            RedisDataLayer._logger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisDataLayer");
+            CacheContext.ContextLogger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisCacheContext");
+            
             app.UseEndpoints(endpoints =>
             {
 
