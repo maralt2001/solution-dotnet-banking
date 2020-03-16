@@ -77,6 +77,7 @@ namespace ServiceRedis
                     ConnectRetry = 3
                 }
                 ).GetDatabase();
+            
 
         }
 

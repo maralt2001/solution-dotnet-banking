@@ -15,8 +15,7 @@ namespace BankingApi.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class CheckEncryptCache : Attribute, IAsyncActionFilter, ICheckEncryptCache
     {
-        public static IServiceProvider CacheProvider { get; set; }
-        public static ILogger Logger { get; set; }
+        public static ICacheContext CacheContext { get; set; }
         
         public CheckEncryptCache()
         {
@@ -25,8 +24,7 @@ namespace BankingApi.Attributes
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var cache = (ICacheContext)CacheProvider.GetService(typeof(ICacheContext));
-            RedisValue[] getValues = await cache.LoadStringsAsync(new RedisKey[] { "originData", "encryptData" },true);
+            RedisValue[] getValues = await CacheContext.LoadStringsAsync(new RedisKey[] { "originData", "encryptData" },true);
 
             if (getValues[0] != context.ActionArguments.Values.FirstOrDefault().ToString()
                 || string.IsNullOrEmpty(getValues[0])

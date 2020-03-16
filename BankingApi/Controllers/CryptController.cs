@@ -46,8 +46,6 @@ namespace BankingApi.Controllers
                 CreatedAt = DateTime.Now.ToShortDateString()
             };
 
-            _logger.LogInformation("Return encryption value from GetRequest ");
-
             bool storeInRedis = await _cacheContext.SaveStringsAsync(new KeyValuePair<RedisKey, RedisValue>[]
             {
                 new KeyValuePair<RedisKey, RedisValue>("originData", data),
@@ -62,7 +60,6 @@ namespace BankingApi.Controllers
             }
             else
             {
-                _logger.LogError("redis caching went wrong");
                 return new BadRequestObjectResult(response.Cipher = "");
             }
         }
