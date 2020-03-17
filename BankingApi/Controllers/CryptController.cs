@@ -9,6 +9,7 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using ServiceRedis;
+using BankingApi.RedisData;
 
 namespace BankingApi.Controllers
 {
@@ -46,14 +47,17 @@ namespace BankingApi.Controllers
                 CreatedAt = DateTime.Now.ToShortDateString()
             };
 
-            bool storeInRedis = await _cacheContext.SaveStringsAsync(new KeyValuePair<RedisKey, RedisValue>[]
-            {
-                new KeyValuePair<RedisKey, RedisValue>("originData", data),
-                new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher)
-            },true);
+            var redisObject = new CacheDataCrypt { OriginData = data, EncryptData = response.Cipher };
+            var saveInCache = await _cacheContext.SerializeObjectAndSaveStringAsync<CacheDataCrypt>(redisObject, HttpContext.Connection, true);
+
+            //bool storeInRedis = await _cacheContext.SaveStringsAsync(new KeyValuePair<RedisKey, RedisValue>[]
+            //{
+            //    new KeyValuePair<RedisKey, RedisValue>("originData", data),
+            //    new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher),
+            //},true);
             
 
-            if (storeInRedis)
+            if (saveInCache)
             {
                 return new OkObjectResult(response);
 

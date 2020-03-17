@@ -3,12 +3,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using BankingApi.Controllers;
 using BankingApi.Helpers;
+using BankingApi.RedisData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using ServiceRedis;
-using StackExchange.Redis;
 
 namespace BankingApi.Attributes
 {
@@ -24,17 +23,16 @@ namespace BankingApi.Attributes
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            RedisValue[] getValues = await CacheContext.LoadStringsAsync(new RedisKey[] { "originData", "encryptData" },true);
 
-            if (getValues[0] != context.ActionArguments.Values.FirstOrDefault().ToString()
-                || string.IsNullOrEmpty(getValues[0])
-                || string.IsNullOrEmpty(getValues[1]))
+            CacheDataCrypt getFromCache = await CacheContext.LoadFromCacheReturnObject<CacheDataCrypt>(context.HttpContext.Connection, true);
+
+            if(string.IsNullOrEmpty(getFromCache.EncryptData) || string.IsNullOrEmpty(getFromCache.OriginData))
             {
                 await next();
             }
             else
             {
-                context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getValues[1], CreatedAt = DateTime.Now.ToShortDateString() });
+                context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getFromCache.EncryptData, CreatedAt = DateTime.Now.ToShortDateString() });
             }
 
         }
