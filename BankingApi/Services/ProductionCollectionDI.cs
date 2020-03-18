@@ -32,7 +32,7 @@ namespace BankingApi.Services
                 options.TokenValidationParameters = new ApplicationToken(configuration).GetTokenValidationParameterAsync().Result;
 
             });
-            
+            // Read Redis Settings from appsettings.json in section Redis
             services.AddSingleton<ICacheContext>(sp => new RedisClient(configuration.GetSection("Redis").GetSection("ConnectionPath").Value));
             CacheContext.HashExpire = Int32.Parse(configuration.GetSection("Redis").GetSection("RedisHashExpire").Value);
             return services;
