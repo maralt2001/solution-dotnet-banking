@@ -31,6 +31,7 @@ services:
       - 5001:80
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
+      - Redis:RedisHashExpire=1 
     depends_on:
       - mongo
   bankingclient:
