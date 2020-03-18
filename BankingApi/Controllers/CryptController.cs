@@ -46,26 +46,14 @@ namespace BankingApi.Controllers
                 Cipher = await result,
                 CreatedAt = DateTime.Now.ToShortDateString()
             };
-
-            var redisObject = new CacheDataCrypt { OriginData = data, EncryptData = response.Cipher };
-            var saveInCache = await _cacheContext.SerializeObjectAndSaveStringAsync<CacheDataCrypt>(redisObject, HttpContext.Connection, true);
-
-            //bool storeInRedis = await _cacheContext.SaveStringsAsync(new KeyValuePair<RedisKey, RedisValue>[]
-            //{
-            //    new KeyValuePair<RedisKey, RedisValue>("originData", data),
-            //    new KeyValuePair<RedisKey, RedisValue>("encryptData", response.Cipher),
-            //},true);
             
+            bool saveInCache = await _cacheContext.SaveHashAsync<CacheDataCrypt>(
+                new CacheDataCrypt {OriginData = data, EncryptData = response.Cipher }, 
+                HttpContext.Connection, true);
 
-            if (saveInCache)
-            {
-                return new OkObjectResult(response);
-
-            }
-            else
-            {
-                return new BadRequestObjectResult(response.Cipher = "");
-            }
+            return saveInCache ? new OkObjectResult(response) as IActionResult : new BadRequestObjectResult(response.Cipher = "") as IActionResult;
+             
+            
         }
 
         [HttpGet]

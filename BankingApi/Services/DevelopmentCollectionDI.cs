@@ -9,6 +9,7 @@ using ApiAccess;
 using ServiceRedis;
 using BankingApi.Attributes;
 using Microsoft.Extensions.Logging;
+using System;
 
 
 namespace BankingApi.Services
@@ -35,6 +36,7 @@ namespace BankingApi.Services
             });
 
             services.AddSingleton<ICacheContext>(sp => new RedisClient(configuration.GetSection("RedisConnectionPath").Value));
+            CacheContext.HashExpire = Int32.Parse( configuration.GetSection("RedisHashExpire").Value);
             return services;
 
         }
@@ -50,6 +52,7 @@ namespace BankingApi.Services
             //Set static fields CacheContext and ContextLogger of Classes CheckEncryptCache and CacheContext
             CheckEncryptCache.CacheContext = (ICacheContext)app.ApplicationServices.GetService(typeof(ICacheContext));
             CacheContext.ContextLogger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisCacheContext");
+             
             
             app.UseEndpoints(endpoints =>
             {

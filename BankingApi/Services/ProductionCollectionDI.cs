@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MongoService;
 using ServiceRedis;
+using System;
 
 namespace BankingApi.Services
 {
@@ -33,7 +34,7 @@ namespace BankingApi.Services
             });
             
             services.AddSingleton<ICacheContext>(sp => new RedisClient(configuration.GetSection("Redis").GetSection("ConnectionPath").Value));
-
+            CacheContext.HashExpire = Int32.Parse(configuration.GetSection("Redis").GetSection("RedisHashExpire").Value);
             return services;
         }
 

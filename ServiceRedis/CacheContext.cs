@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ServiceRedis
@@ -17,6 +16,7 @@ namespace ServiceRedis
 
         public IDatabase Database { get; set; }
         public static ILogger ContextLogger { get; set; }
+        public static int HashExpire { get; set; }
 
         public async Task<bool> SaveStringsAsync(KeyValuePair<RedisKey, RedisValue>[] keyValues, bool contextLoggerEnable = false)
         {
@@ -70,9 +70,9 @@ namespace ServiceRedis
             return await result;
         }
 
-        public async Task<bool> SerializeObjectAndSaveStringAsync<T>(T dataObject, ConnectionInfo info, bool contextLoggerEnable = false)
+        public async Task<bool> SaveHashAsync<T>(T dataObject, ConnectionInfo info, bool contextLoggerEnable = false)
         {
-            var result = Task.Run(() => 
+            return await Task.Run(() => 
             {
                 try
                 {
@@ -80,9 +80,9 @@ namespace ServiceRedis
                     {
                         ContextLogger.LogInformation("Saving in redis cache");
                     }
-                    string connectionId = info.Id;
-                    var hashEntries = ToHashEntries(dataObject);
-                    Database.HashSet(connectionId, hashEntries);
+                    
+                    Database.HashSet(info.Id, ToHashEntries(dataObject));
+                    Database.KeyExpire(info.Id, TimeSpan.FromMinutes(HashExpire));
                     return true;
                 }
                 catch (Exception)
@@ -95,20 +95,19 @@ namespace ServiceRedis
                 }
             });
 
-            return await result;
             
         }
 
-        public async Task<T> LoadFromCacheReturnObject<T>(ConnectionInfo info, bool contextLoggerEnable = false)
+        public async Task<T> LoadHashAsync<T>(ConnectionInfo info, bool contextLoggerEnable = false)
         {
-            var result = Task.Run(() =>
+            return await Task.Run(() =>
             {
-            try
-            {
-                if (contextLoggerEnable)
+                try
                 {
-                    ContextLogger.LogInformation("Loading from redis cache");
-                }
+                    if (contextLoggerEnable)
+                    {
+                        ContextLogger.LogInformation("Loading from redis cache");
+                    }
                
                     HashEntry[] loadCache = Database.HashGetAll(info.Id);
                     return GetObjectFromHash<T>(loadCache);
@@ -121,12 +120,9 @@ namespace ServiceRedis
                         ContextLogger.LogWarning("Loading from redis went wrong");
                     }
 
-
                     return (T)Activator.CreateInstance(typeof(T));
                 }
             });
-
-           return await result;
             
         }
 
@@ -142,14 +138,14 @@ namespace ServiceRedis
                           object propertyValue = property.GetValue(obj);
                           string hashValue;
 
-                  // This will detect if given property value is 
-                  // enumerable, which is a good reason to serialize it
-                  // as JSON!
-                  if (propertyValue is IEnumerable<object>)
+                          // This will detect if given property value is 
+                          // enumerable, which is a good reason to serialize it
+                          // as JSON!
+                          if (propertyValue is IEnumerable<object>)
                           {
-                      // So you use JSON.NET to serialize the property
-                      // value as JSON
-                      hashValue = JsonConvert.SerializeObject(propertyValue);
+                              // So you use JSON.NET to serialize the property
+                              // value as JSON
+                              hashValue = JsonConvert.SerializeObject(propertyValue);
                           }
                           else
                           {
@@ -158,21 +154,27 @@ namespace ServiceRedis
 
                           return new HashEntry(property.Name, hashValue);
                       }
-                )
-                .ToArray();
+                ).ToArray();
         }
 
         private T GetObjectFromHash<T>(HashEntry[] hashEntries)
         {
+            
             var cacheItemsList = new List<KeyValuePair<string, string>>();
+
+            //iterate each item in hashEntries Array an set it as key value pair in cachItemList
             foreach (var item in hashEntries)
             {
                 cacheItemsList.Add(new KeyValuePair<string, string>(item.Name, item.Value));
             }
 
+            //create Oject of type T from Method call
             T obj = (T)Activator.CreateInstance(typeof(T));
+
+            //get properties all properties of obj
             PropertyInfo[] objectProperties = obj.GetType().GetProperties();
 
+            // iterate of each Property Info Array set for every Property of obj the value from the cachItemsList
             foreach (var item in objectProperties)
             {
                 obj.GetType().GetProperty(item.Name).SetValue(obj, cacheItemsList.Find(s => s.Key == item.Name).Value);
@@ -194,10 +196,7 @@ namespace ServiceRedis
                     ConnectRetry = 3
                 }
                 ).GetDatabase();
-            
 
         }
-
-        
     }
 }

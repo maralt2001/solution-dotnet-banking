@@ -24,7 +24,7 @@ namespace BankingApi.Attributes
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
 
-            CacheDataCrypt getFromCache = await CacheContext.LoadFromCacheReturnObject<CacheDataCrypt>(context.HttpContext.Connection, true);
+            CacheDataCrypt getFromCache = await CacheContext.LoadHashAsync<CacheDataCrypt>(context.HttpContext.Connection, true);
 
             if(string.IsNullOrEmpty(getFromCache.EncryptData) || string.IsNullOrEmpty(getFromCache.OriginData))
             {

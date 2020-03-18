@@ -12,8 +12,8 @@ namespace ServiceRedis
         
         Task<RedisValue[]> LoadStringsAsync(RedisKey[] redisKeys, bool contextLoggerEnable = false);
         Task<bool> SaveStringsAsync(KeyValuePair<RedisKey, RedisValue>[] keyValues, bool contextLoggerEnable = false);
-        Task<bool> SerializeObjectAndSaveStringAsync<T>(T dataObject, ConnectionInfo info, bool contextLoggerEnable = false);
-        Task<T> LoadFromCacheReturnObject<T>(ConnectionInfo info, bool contextLoggerEnable = false);
+        Task<bool> SaveHashAsync<T>(T dataObject, ConnectionInfo info, bool contextLoggerEnable = false);
+        Task<T> LoadHashAsync<T>(ConnectionInfo info, bool contextLoggerEnable = false);
         
 
 

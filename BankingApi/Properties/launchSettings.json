@@ -29,7 +29,8 @@
         "DBName": "WebDB",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DBConnectionPath": "mongodb://localhost",
-        "RedisConnectionPath": "host.docker.internal:6379"
+        "RedisConnectionPath": "host.docker.internal:6379",
+        "RedisHashExpire": "10"
       },
       "applicationUrl": "http://localhost:5000/"
     },
@@ -42,7 +43,8 @@
         "DBName": "WebDB",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DBConnectionPath": "mongodb://host.docker.internal",
-        "RedisConnectionPath": "host.docker.internal:6379"
+        "RedisConnectionPath": "host.docker.internal:6379",
+        "RedisHashExpire" : "10"
       },
       "httpPort": 51496
     }
