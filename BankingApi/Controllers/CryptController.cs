@@ -5,12 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServiceDataProtection;
 using BankingApi.Attributes;
-using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
 using ServiceRedis;
 using BankingApi.RedisData;
-using System.Web.Http.Results;
 
 namespace BankingApi.Controllers
 {

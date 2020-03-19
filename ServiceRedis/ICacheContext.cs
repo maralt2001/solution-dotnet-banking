@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -1,6 +1,5 @@
 ﻿using ApiAccess;
 using BankingApi.Attributes;
-using BankingApi.Helpers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

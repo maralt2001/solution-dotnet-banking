@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Net;
 using System;
 using System.Linq;
-using Microsoft.AspNetCore.JsonPatch;
-using System.Dynamic;
 using System.Net.Http.Headers;
 
 namespace HttpService

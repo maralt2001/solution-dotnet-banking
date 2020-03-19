@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoService.Helpers;
-using System.Threading;
 
 namespace MongoService
 {
