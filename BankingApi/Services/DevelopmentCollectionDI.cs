@@ -10,7 +10,6 @@ using ServiceRedis;
 using BankingApi.Attributes;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
 
 namespace BankingApi.Services
 {

@@ -237,7 +237,7 @@ namespace ServiceRedis
                     }
                     catch (Exception)
                     {
-                        Thread.Sleep(10000);
+                        Thread.Sleep(TimeSpan.FromSeconds(10));
                         StartupFail = true;
                         ContextLogger.LogError("Connection to redis fails");
                     }

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using ServiceRedis;
 using BankingApi.RedisData;
+using System.Web.Http.Results;
 
 namespace BankingApi.Controllers
 {
@@ -51,9 +52,8 @@ namespace BankingApi.Controllers
                 new CacheDataCrypt {OriginData = data, EncryptData = response.Cipher }, 
                 HttpContext.Connection, true);
 
-            return saveInCache ? new OkObjectResult(response) as IActionResult : new BadRequestObjectResult(new ResponseEncryt {Cipher = "something went wrong" }) as IActionResult;
-             
-            
+            return saveInCache ? new OkObjectResult(response) as IActionResult : 
+                new BadRequestObjectResult(new ResponseEncryt {Cipher = "Something went wrong", CreatedAt = DateTime.Now.ToLocalTime().ToString()}) as IActionResult;
         }
 
         [HttpGet]
