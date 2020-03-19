@@ -24,15 +24,25 @@ namespace BankingApi.Attributes
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
 
-            CacheDataCrypt getFromCache = await CacheContext.LoadHashAsync<CacheDataCrypt>(context.HttpContext.Connection, true);
-
-            if(string.IsNullOrEmpty(getFromCache.EncryptData) || string.IsNullOrEmpty(getFromCache.OriginData))
+            //check query contain the key data
+            if(!context.ActionArguments.ContainsKey("data"))
             {
-                await next();
+                context.Result = new BadRequestObjectResult("Your query is wrong");
             }
             else
             {
-                context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getFromCache.EncryptData, CreatedAt = DateTime.Now.ToShortDateString() });
+                var valueOfDataProp = context.ActionArguments["data"].ToString();
+                CacheDataCrypt getFromCache = await CacheContext.LoadHashAsync<CacheDataCrypt>(context.HttpContext.Connection, true);
+
+                if (string.IsNullOrEmpty(getFromCache.EncryptData) || string.IsNullOrEmpty(getFromCache.OriginData) || getFromCache.OriginData != valueOfDataProp)
+                {
+
+                    await next();
+                }
+                else
+                {
+                    context.Result = new OkObjectResult(new ResponseEncryt { Cipher = getFromCache.EncryptData, CreatedAt = DateTime.Now.ToShortDateString() });
+                }
             }
 
         }

@@ -51,7 +51,7 @@ namespace BankingApi.Controllers
                 new CacheDataCrypt {OriginData = data, EncryptData = response.Cipher }, 
                 HttpContext.Connection, true);
 
-            return saveInCache ? new OkObjectResult(response) as IActionResult : new BadRequestObjectResult(response.Cipher = "") as IActionResult;
+            return saveInCache ? new OkObjectResult(response) as IActionResult : new BadRequestObjectResult(new ResponseEncryt {Cipher = "something went wrong" }) as IActionResult;
              
             
         }

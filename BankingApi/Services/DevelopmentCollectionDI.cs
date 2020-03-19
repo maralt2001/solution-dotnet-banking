@@ -10,7 +10,7 @@ using ServiceRedis;
 using BankingApi.Attributes;
 using Microsoft.Extensions.Logging;
 using System;
-
+using System.Threading;
 
 namespace BankingApi.Services
 {
@@ -52,13 +52,14 @@ namespace BankingApi.Services
             //Set static fields CacheContext and ContextLogger of Classes CheckEncryptCache and CacheContext
             CheckEncryptCache.CacheContext = (ICacheContext)app.ApplicationServices.GetService(typeof(ICacheContext));
             CacheContext.ContextLogger = LoggerFactory.Create(builder => { builder.AddConsole(); }).CreateLogger("RedisCacheContext");
-             
-            
+
             app.UseEndpoints(endpoints =>
             {
 
                 endpoints.MapControllers();
             });
+
+            
 
             return app;
         }

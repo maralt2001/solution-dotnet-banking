@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServiceRedis
@@ -17,6 +18,7 @@ namespace ServiceRedis
         public IDatabase Database { get; set; }
         public static ILogger ContextLogger { get; set; }
         public static int HashExpire { get; set; }
+        public static bool StartupFail { get; set; } = false;
 
         public async Task<bool> SaveStringsAsync(KeyValuePair<RedisKey, RedisValue>[] keyValues, bool contextLoggerEnable = false)
         {
@@ -182,6 +184,8 @@ namespace ServiceRedis
 
             return obj;
         }
+
+        
         
     }
 
@@ -189,14 +193,60 @@ namespace ServiceRedis
     {
         public RedisClient(string connectionPath)
         {
-           this.Database = ConnectionMultiplexer.Connect(
+            try
+            {
+                this.Database = ConnectionMultiplexer.Connect(
                 new ConfigurationOptions
                 {
                     EndPoints = { connectionPath },
-                    ConnectRetry = 3
+                    ConnectRetry = 1,
+                    ReconnectRetryPolicy = new LinearRetry(5000)
+
                 }
                 ).GetDatabase();
+            }
+            catch (RedisConnectionException)
+            {
+                StartupFail = true;
+                HandleRedisConnectionError(connectionPath);
+                return;
+            }
+
 
         }
+
+        private void HandleRedisConnectionError(string path)
+        {
+            // Thread run at startup when Redis Client failed to connect. Retry interval every 10s
+            Thread startUpRedisConnection = new Thread(() =>
+            {
+                while (StartupFail)
+                {
+                    try
+                    {
+                        this.Database = ConnectionMultiplexer.Connect(
+                        new ConfigurationOptions
+                        {
+                            EndPoints = { path },
+                            ConnectRetry = 1,
+                            ReconnectRetryPolicy = new LinearRetry(5000)
+
+                        }).GetDatabase();
+                        StartupFail = false;
+                        ContextLogger.LogInformation("Connection to redis established");
+                    }
+                    catch (Exception)
+                    {
+                        Thread.Sleep(10000);
+                        StartupFail = true;
+                        ContextLogger.LogError("Connection to redis fails");
+                    }
+                }
+            });
+            startUpRedisConnection.Start();
+           
+            
+        }
+
     }
 }
