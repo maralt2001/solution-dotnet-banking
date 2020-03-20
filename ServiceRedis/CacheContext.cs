@@ -16,6 +16,8 @@ namespace ServiceRedis
     {
 
         public IDatabase Database { get; set; }
+        public ConnectionMultiplexer Connection { get; set; }
+        public string ConnectionPath { get; set; }
         public static ILogger ContextLogger { get; set; }
         public static int HashExpire { get; set; }
         public static bool StartupFail { get; set; } = false;
@@ -100,7 +102,7 @@ namespace ServiceRedis
             
         }
 
-        public async Task<T> LoadHashAsync<T>(ConnectionInfo info, bool contextLoggerEnable = false)
+        public async Task<T> LoadHashAsync<T>(RedisKey key, bool contextLoggerEnable = false)
         {
             return await Task.Run(() =>
             {
@@ -111,7 +113,7 @@ namespace ServiceRedis
                         ContextLogger.LogInformation("Loading from redis cache");
                     }
                
-                    HashEntry[] loadCache = Database.HashGetAll(info.Id);
+                    HashEntry[] loadCache = Database.HashGetAll(key);
                     return GetObjectFromHash<T>(loadCache);
 
                 }
@@ -124,6 +126,25 @@ namespace ServiceRedis
 
                     return (T)Activator.CreateInstance(typeof(T));
                 }
+            });
+            
+        }
+
+        public async Task<List<RedisKey>> LoadKeysOfCache()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    return Connection.GetServer(ConnectionPath).Keys().ToList();
+                }
+                catch (NullReferenceException)
+                {
+
+                    return new List<RedisKey>();
+                }
+                
+
             });
             
         }
@@ -195,7 +216,7 @@ namespace ServiceRedis
         {
             try
             {
-                this.Database = ConnectionMultiplexer.Connect(
+                this.Connection = ConnectionMultiplexer.Connect(
                 new ConfigurationOptions
                 {
                     EndPoints = { connectionPath },
@@ -203,7 +224,9 @@ namespace ServiceRedis
                     ReconnectRetryPolicy = new LinearRetry(5000)
 
                 }
-                ).GetDatabase();
+                );
+                this.Database = Connection.GetDatabase();
+                this.ConnectionPath = connectionPath;
             }
             catch (RedisConnectionException)
             {
@@ -224,14 +247,16 @@ namespace ServiceRedis
                 {
                     try
                     {
-                        this.Database = ConnectionMultiplexer.Connect(
+                        this.Connection = ConnectionMultiplexer.Connect(
                         new ConfigurationOptions
                         {
                             EndPoints = { path },
                             ConnectRetry = 1,
                             ReconnectRetryPolicy = new LinearRetry(5000)
 
-                        }).GetDatabase();
+                        });
+                        this.Database = Connection.GetDatabase();
+                        this.ConnectionPath = path;
                         StartupFail = false;
                         ContextLogger.LogInformation("Connection to redis established");
                     }

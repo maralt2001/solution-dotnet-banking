@@ -29,7 +29,7 @@ namespace BankingApi.Attributes
             else
             {
                 var valueOfDataProp = context.ActionArguments["data"].ToString();
-                CacheDataCrypt getFromCache = await CacheContext.LoadHashAsync<CacheDataCrypt>(context.HttpContext.Connection, true);
+                CacheDataCrypt getFromCache = await CacheContext.LoadHashAsync<CacheDataCrypt>(context.HttpContext.Connection.Id, true);
 
                 if (string.IsNullOrEmpty(getFromCache.EncryptData) || string.IsNullOrEmpty(getFromCache.OriginData) || getFromCache.OriginData != valueOfDataProp)
                 {
